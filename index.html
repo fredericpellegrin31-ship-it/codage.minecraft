@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Code Explore - Spécial Cycle 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body { font-family: 'Nunito', sans-serif; background-color: #f0fdf4; touch-action: manipulation; }
+        
+        /* Ruban de commandes (Workspace) */
+        #workspace {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            min-height: 100px;
+            background: #ffffff;
+            border-radius: 1rem;
+            border: 4px solid #bbf7d0;
+            box-shadow: inset 0 4px 6px rgba(0,0,0,0.05);
+            align-items: center;
+        }
+
+        /* Cartes de commandes dans le ruban */
+        .command-card {
+            flex: 0 0 auto;
+            width: 70px;
+            height: 80px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+            position: relative;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .command-card:active { transform: translateY(4px); box-shadow: none; }
+        
+        .command-card.forward { background-color: #3b82f6; box-shadow: 0 4px 0 #1d4ed8; }
+        .command-card.backward { background-color: #f97316; box-shadow: 0 4px 0 #c2410c; }
+        .command-card.left { background-color: #a855f7; box-shadow: 0 4px 0 #7e22ce; }
+        .command-card.right { background-color: #ec4899; box-shadow: 0 4px 0 #be185d; }
+
+        .step-num {
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            background: #1f2937;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+
+        .delete-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 12px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+        .command-card:hover .delete-badge { display: flex; }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Boutons d'action géants (style TuxBot) */
+        .tux-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1rem;
+            color: white;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            padding: 0.5rem;
+            transition: all 0.1s;
+            user-select: none;
+        }
+        .tux-btn:active { transform: translateY(6px); box-shadow: 0 0 0 transparent !important; }
+
+        .btn-forward { background-color: #3b82f6; box-shadow: 0 6px 0 #1d4ed8; }
+        .btn-backward { background-color: #f97316; box-shadow: 0 6px 0 #c2410c; }
+        .btn-left { background-color: #a855f7; box-shadow: 0 6px 0 #7e22ce; }
+        .btn-right { background-color: #ec4899; box-shadow: 0 6px 0 #be185d; }
+        .btn-play { background-color: #22c55e; box-shadow: 0 6px 0 #15803d; font-size: 1.2rem; }
+        .btn-delete { background-color: #ef4444; box-shadow: 0 4px 0 #b91c1c; }
+
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 1rem;
+            overflow: hidden;
+            background: #87CEEB; /* Sky blue */
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+            cursor: grab;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+        }
+        #canvas-container:active { cursor: grabbing; }
+
+        /* Scrollbar custom */
+        ::-webkit-scrollbar { height: 10px; width: 10px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .level-btn { transition: all 0.2s; }
+        .level-btn.active { background-color: #3b82f6; color: white; border-color: #2563eb; transform: scale(1.1); font-weight: bold; }
+        .level-btn.locked { opacity: 0.5; cursor: not-allowed; background-color: #e5e7eb; border-color: #d1d5db; color: #9ca3af; }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col">
+
+    <!-- Header & Level Selector -->
+    <header class="bg-white shadow-md p-2 flex flex-col sm:flex-row justify-between items-center z-10 gap-2 shrink-0">
+        <div class="flex items-center gap-3">
+            <h1 class="text-xl sm:text-2xl font-extrabold text-green-600 tracking-tight flex items-center gap-2">
+                🤖 Code Explore
+            </h1>
+            <span class="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full">CE1</span>
+        </div>
+        
+        <div class="flex items-center gap-1 overflow-x-auto max-w-full pb-1 px-1" id="level-selector">
+            <!-- Rempli par JS -->
+        </div>
+
+        <button onclick="generateAndLoadCurrentLevel()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold py-1.5 px-3 rounded-lg text-sm border-2 border-indigo-300 shadow-sm flex items-center gap-1 shrink-0 whitespace-nowrap">
+            🎲 Nouveau parcours
+        </button>
+    </header>
+
+    <!-- Main Game Area -->
+    <main class="flex-grow flex flex-col md:flex-row p-2 sm:p-4 gap-4 overflow-hidden">
+        
+        <!-- Left Area: 3D View & Workspace -->
+        <section class="flex-1 flex flex-col gap-4 min-h-0">
+            <!-- Header du niveau -->
+            <div class="bg-white p-3 rounded-2xl shadow-sm border border-green-100 shrink-0">
+                <h2 id="level-title" class="text-lg font-bold text-gray-800">1. Premiers pas</h2>
+                <p id="level-desc" class="text-sm text-gray-500">Fais avancer le robot jusqu'au coffre !</p>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="flex-grow relative flex items-center justify-center min-h-[200px]">
+                <div id="canvas-container">
+                    <canvas id="three-canvas"></canvas>
+                    
+                    <!-- Compteur de coffres -->
+                    <div id="chest-counter" class="absolute top-2 right-2 bg-white/90 border-2 border-amber-400 text-amber-800 font-bold px-3 py-1.5 rounded-xl text-xs sm:text-sm shadow-md hidden flex items-center gap-2">
+                        <span class="text-lg">🏆</span> <span id="chests-collected">0</span> / <span id="chests-total">1</span>
+                    </div>
+
+                    <!-- Overlay d'aide tacticle/visuelle -->
+                    <div class="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded pointer-events-none">
+                        💡 Glisser pour tourner, Molette pour zoomer
+                    </div>
+                </div>
+            </div>
+
+            <!-- Programme (Ruban) -->
+            <div class="shrink-0 flex flex-col gap-1">
+                <div class="flex justify-between items-end px-1">
+                    <h3 class="font-bold text-gray-700 text-sm">Mon Programme :</h3>
+                    <div class="flex gap-2">
+                        <button onclick="removeLastAction()" class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded border border-red-200 font-bold hover:bg-red-200">⌫ Effacer dernier</button>
+                        <button onclick="clearWorkspace()" class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded border border-gray-300 font-bold hover:bg-gray-300">✕ Tout effacer</button>
+                    </div>
+                </div>
+                <div id="workspace" class="relative">
+                    <div class="absolute inset-0 flex items-center justify-center text-gray-400 font-bold pointer-events-none">
+                        Appuie sur les boutons pour programmer Codi
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Area: Controls (Boutons d'action) -->
+        <section class="w-full md:w-80 lg:w-96 bg-white p-4 rounded-2xl shadow-lg border-2 border-green-200 flex flex-col gap-4 shrink-0 overflow-y-auto">
+            <h3 class="font-bold text-gray-800 text-center uppercase tracking-wide border-b-2 border-green-100 pb-2">Boîte à commandes</h3>
+            
+            <div class="grid grid-cols-2 gap-3 flex-grow content-start">
+                <button onclick="addAction('FORWARD')" class="tux-btn btn-forward col-span-2">
+                    <span class="text-5xl mb-1">↑</span>
+                    <span>Avancer</span>
+                </button>
+                
+                <button onclick="addAction('LEFT')" class="tux-btn btn-left h-24">
+                    <!-- Flèche pivotée à -90° -->
+                    <span class="text-4xl mb-1" style="transform: rotate(-90deg); display: inline-block;">↺</span>
+                    <span>À gauche</span>
+                </button>
+
+                <button onclick="addAction('RIGHT')" class="tux-btn btn-right h-24">
+                    <!-- Flèche pivotée à 90° -->
+                    <span class="text-4xl mb-1" style="transform: rotate(90deg); display: inline-block;">↻</span>
+                    <span>À droite</span>
+                </button>
+
+                <button onclick="addAction('BACKWARD')" class="tux-btn btn-backward col-span-2">
+                    <span class="text-4xl mb-1">↓</span>
+                    <span>Reculer</span>
+                </button>
+            </div>
+
+            <div class="mt-auto pt-4 border-t-2 border-gray-100">
+                <button onclick="runProgram()" id="run-btn" class="tux-btn btn-play w-full py-4 text-xl">
+                    ▶ Lancer le robot
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modals -->
+    <div id="victory-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 hidden backdrop-blur-sm p-4">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-sm w-full border-4 border-green-400 transform transition-all scale-100">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-3xl font-extrabold text-green-600 mb-2">Bravo !</h2>
+            <p class="text-gray-600 font-bold mb-6">Tu as récupéré tous les coffres !</p>
+            <div class="flex flex-col gap-3">
+                <button onclick="nextLevel()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg border-b-4 border-green-700 active:translate-y-1 active:border-b-0 transition-all text-lg">
+                    Niveau Suivant ➔
+                </button>
+                <button onclick="generateAndLoadCurrentLevel()" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold py-3 px-6 rounded-xl border-2 border-blue-300 active:translate-y-1 transition-all">
+                    Refaire (Autre parcours) 🎲
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Game State ---
+        let currentLevel = 0;
+        let maxUnlockedLevel = 0;
+        let isRunning = false;
+        let programActions = [];
+        let generatedLevelData = null;
+
+        // --- Action Definitions ---
+        const ACTIONS = {
+            'FORWARD': { label: '↑', class: 'forward', type: 'move' },
+            'BACKWARD': { label: '↓', class: 'backward', type: 'move' },
+            'LEFT': { label: '↺', class: 'left', type: 'turn' },
+            'RIGHT': { label: '↻', class: 'right', type: 'turn' }
+        };
+
+        function getShortActionLabel(key) {
+            switch(key) {
+                case 'FORWARD': return 'Avance';
+                case 'BACKWARD': return 'Recule';
+                case 'LEFT': return 'Gauche';
+                case 'RIGHT': return 'Droite';
+                default: return '';
+            }
+        }
+
+        // --- Level Data & Generation ---
+        const LEVEL_SPECS = [
+            { size: 4, pathLength: 2, obstacleDensity: 0.0, chests: 1 },   // Niveau 1
+            { size: 4, pathLength: 3, obstacleDensity: 0.1, chests: 1 },   // Niveau 2
+            { size: 5, pathLength: 4, obstacleDensity: 0.15, chests: 1 },  // Niveau 3
+            { size: 5, pathLength: 5, obstacleDensity: 0.2, chests: 1 },   // Niveau 4
+            { size: 5, pathLength: 6, obstacleDensity: 0.25, chests: 1 },  // Niveau 5
+            { size: 6, pathLength: 6, obstacleDensity: 0.2, chests: 2 },   // Niveau 6 (2 coffres)
+            { size: 6, pathLength: 8, obstacleDensity: 0.25, chests: 2 },  // Niveau 7 (2 coffres)
+            { size: 6, pathLength: 9, obstacleDensity: 0.3, chests: 3 },   // Niveau 8 (3 coffres)
+            { size: 7, pathLength: 10, obstacleDensity: 0.3, chests: 3 },  // Niveau 9 (3 coffres)
+            { size: 7, pathLength: 12, obstacleDensity: 0.35, chests: 3 }  // Niveau 10 (3 coffres)
+        ];
+
+        function generateProceduralLevel(levelIndex) {
+            const spec = LEVEL_SPECS[levelIndex];
+            const size = spec.size;
+            
+            let grid = Array(size).fill(null).map(() => Array(size).fill(1)); // 1 = Obstacle
+            
+            let current = { x: 0, z: size - 1 };
+            grid[current.z][current.x] = 0; // Départ ouvert
+            let path = [{ x: current.x, z: current.z }];
+
+            const dirs = [{x:0,z:-1}, {x:1,z:0}, {x:0,z:1}, {x:-1,z:0}];
+
+            for (let i = 0; i < spec.pathLength; i++) {
+                let validDirs = dirs.filter(d => {
+                    let nx = current.x + d.x;
+                    let nz = current.z + d.z;
+                    if (nx < 0 || nx >= size || nz < 0 || nz >= size) return false;
+                    if (path.some(p => p.x === nx && p.z === nz)) return false;
+                    return true;
+                });
+
+                if (validDirs.length === 0) break;
+
+                let chosenDir = validDirs[Math.floor(Math.random() * validDirs.length)];
+                current = { x: current.x + chosenDir.x, z: current.z + chosenDir.z };
+                path.push({ x: current.x, z: current.z });
+                grid[current.z][current.x] = 0; // Chemin ouvert
+            }
+
+            // Placement des coffres (buts)
+            let chestsToPlace = spec.chests;
+            let availablePathSpots = [...path]; 
+            // Exclure le point de départ
+            availablePathSpots = availablePathSpots.filter(p => !(p.x === 0 && p.z === size - 1));
+            // Mélanger
+            availablePathSpots.sort(() => Math.random() - 0.5);
+
+            for (let i = 0; i < chestsToPlace; i++) {
+                if (availablePathSpots.length > 0) {
+                    let spot = availablePathSpots.pop();
+                    grid[spot.z][spot.x] = 2; // 2 = Coffre
+                }
+            }
+
+            // Remplissage du reste avec densité d'obstacles
+            for (let z = 0; z < size; z++) {
+                for (let x = 0; x < size; x++) {
+                    if (grid[z][x] === 1) {
+                        grid[z][x] = Math.random() < spec.obstacleDensity ? 1 : 0;
+                    }
+                }
+            }
+            grid[size - 1][0] = 0; // Départ forcé à 0
+
+            const titles = [
+                "1. Premiers pas", "2. Un peu plus loin", "3. Le premier virage",
+                "4. Le parcours du slalom", "5. Le pont d'obstacles", "6. Chasse au trésor double",
+                "7. L'escalier volcanique", "8. Le grand détour", "9. Le mystère des arbres",
+                "10. Le labyrinthe final"
+            ];
+            
+            const descs = [
+                "Fais avancer Codi vers le coffre.",
+                "Attention aux arbres ! Trouve ton chemin.",
+                "Utilise les virages à gauche et à droite pour tourner.",
+                "Slalome entre les obstacles sans rien toucher !",
+                "Planifie soigneusement ta trajectoire !",
+                "Ramasse les 2 coffres ! Tu peux reculer si besoin.",
+                "Monte en alternant et récupère les 2 coffres !",
+                "Grand détour nécessaire ! Ramasse les 3 coffres.",
+                "Compte bien chaque case ! 3 coffres à trouver.",
+                "Le parcours suprême ! Collecte les 3 coffres."
+            ];
+
+            return {
+                grid: grid,
+                size: size,
+                start: { x: 0, z: size - 1, dir: 0 }, // Face au Nord (-Z)
+                title: titles[levelIndex],
+                desc: descs[levelIndex]
+            };
+        }
+
+        // --- 3D Engine Variables ---
+        let scene, camera, renderer;
+        let gridBlocks = []; 
+        let playerRobotMesh; 
+        let activeChests = []; 
+        let isMouseDown = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let cameraAngleX = Math.PI / 4; 
+        let cameraAngleY = Math.PI / 5; 
+        let cameraRadius = 11;
+        let initialPinchDistance = null;
+
+        // --- Audio System (Tone.js) ---
+        let audioInitialized = false;
+        let moveSynth, winSynth, failSynth, collectSynth;
+
+        async function initAudio() {
+            if (audioInitialized) return;
+            try {
+                await Tone.start();
+                moveSynth = new Tone.Synth({
+                    oscillator: { type: "square" },
+                    envelope: { attack: 0.05, decay: 0.1, sustain: 0, release: 0.1 }
+                }).toDestination();
+                moveSynth.volume.value = -15;
+
+                winSynth = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: "triangle" },
+                    envelope: { attack: 0.1, decay: 0.2, sustain: 0.5, release: 1 }
+                }).toDestination();
+                winSynth.volume.value = -10;
+
+                failSynth = new Tone.Synth({
+                    oscillator: { type: "sawtooth" },
+                    envelope: { attack: 0.05, decay: 0.3, sustain: 0.1, release: 0.4 }
+                }).toDestination();
+                failSynth.volume.value = -12;
+
+                collectSynth = new Tone.Synth({
+                    oscillator: { type: "sine" },
+                    envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.2 }
+                }).toDestination();
+                collectSynth.volume.value = -10;
+
+                audioInitialized = true;
+            } catch(e) { console.warn("L'initialisation audio a échoué:", e); }
+        }
+
+        function playMoveSound() { if(audioInitialized) moveSynth.triggerAttackRelease("C4", "16n"); }
+        function playWinSound() { if(audioInitialized) { winSynth.triggerAttackRelease(["C4", "E4", "G4", "C5"], "2n"); } }
+        function playFailSound() { if(audioInitialized) failSynth.triggerAttackRelease("Bb1", "4n"); }
+        function playCollectSound() { if(audioInitialized) collectSynth.triggerAttackRelease("E5", "16n"); }
+
+        function startConfetti() {
+            var duration = 3 * 1000;
+            var end = Date.now() + duration;
+            (function frame() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#22c55e', '#eab308', '#3b82f6'] });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#22c55e', '#eab308', '#3b82f6'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+        }
+
+        // --- 3D Initialization ---
+        function init3D() {
+            const container = document.getElementById('canvas-container');
+            const canvas = document.getElementById('three-canvas');
+            
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x87CEEB); // Ciel
+            scene.fog = new THREE.Fog(0x87CEEB, 10, 30);
+
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+            
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+            // Lumières
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(10, 20, 10);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 1024;
+            dirLight.shadow.mapSize.height = 1024;
+            dirLight.shadow.camera.left = -10;
+            dirLight.shadow.camera.right = 10;
+            dirLight.shadow.camera.top = 10;
+            dirLight.shadow.camera.bottom = -10;
+            scene.add(dirLight);
+
+            // Gestion souris / tactile (Rotation et Zoom)
+            container.addEventListener('mousedown', (e) => {
+                isMouseDown = true;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+            window.addEventListener('mouseup', () => { isMouseDown = false; });
+            container.addEventListener('mousemove', (e) => {
+                if (!isMouseDown) return;
+                const deltaX = e.clientX - previousMousePosition.x;
+                const deltaY = e.clientY - previousMousePosition.y;
+                cameraAngleX -= deltaX * 0.01;
+                cameraAngleY = Math.max(0.15, Math.min(Math.PI / 2.1, cameraAngleY + deltaY * 0.01));
+                updateCameraPosition();
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+
+            // Zoom molette
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                cameraRadius += e.deltaY * 0.01;
+                cameraRadius = Math.max(6, Math.min(25, cameraRadius));
+                updateCameraPosition();
+            }, { passive: false });
+
+            // Tactile
+            container.addEventListener('touchstart', (e) => {
+                if(e.touches.length === 1) {
+                    isMouseDown = true;
+                    previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                } else if (e.touches.length === 2) {
+                    initialPinchDistance = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                }
+            }, {passive: false});
+            container.addEventListener('touchend', () => { 
+                isMouseDown = false; 
+                initialPinchDistance = null;
+            });
+            container.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 1 && isMouseDown) {
+                    e.preventDefault();
+                    const deltaX = e.touches[0].clientX - previousMousePosition.x;
+                    const deltaY = e.touches[0].clientY - previousMousePosition.y;
+                    cameraAngleX -= deltaX * 0.01;
+                    cameraAngleY = Math.max(0.15, Math.min(Math.PI / 2.1, cameraAngleY + deltaY * 0.01));
+                    updateCameraPosition();
+                    previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                } else if (e.touches.length === 2 && initialPinchDistance) {
+                    e.preventDefault();
+                    const currentDistance = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                    const delta = initialPinchDistance - currentDistance;
+                    cameraRadius += delta * 0.03;
+                    cameraRadius = Math.max(6, Math.min(25, cameraRadius));
+                    updateCameraPosition();
+                    initialPinchDistance = currentDistance;
+                }
+            }, {passive: false});
+
+            window.addEventListener('resize', onWindowResize);
+            animateLoop();
+        }
+
+        function updateCameraPosition() {
+            if (!generatedLevelData) return;
+            const size = generatedLevelData.size;
+            const cx = (size - 1) / 2;
+            const cz = (size - 1) / 2;
+            
+            camera.position.x = cx + cameraRadius * Math.sin(cameraAngleX) * Math.cos(cameraAngleY);
+            camera.position.y = cameraRadius * Math.sin(cameraAngleY);
+            camera.position.z = cz + cameraRadius * Math.cos(cameraAngleX) * Math.cos(cameraAngleY);
+            
+            camera.lookAt(cx, 0.2, cz);
+        }
+
+        function onWindowResize() {
+            if (!camera || !renderer) return;
+            const container = document.getElementById('canvas-container');
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        // --- Textures Procédurales ---
+        function createRetroTexture(colors) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 16; canvas.height = 16;
+            const ctx = canvas.getContext('2d');
+            for(let i=0; i<16; i++) {
+                for(let j=0; j<16; j++) {
+                    ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
+                    ctx.fillRect(i, j, 1, 1);
+                }
+            }
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.magFilter = THREE.NearestFilter;
+            return tex;
+        }
+
+        const texGrassTop = createRetroTexture(['#4ade80', '#22c55e', '#16a34a']);
+        const texDirt = createRetroTexture(['#a16207', '#854d0e', '#713f12']);
+        const texWood = createRetroTexture(['#78350f', '#92400e', '#b45309']);
+        const texLeaves = createRetroTexture(['#15803d', '#166534', '#14532d']);
+
+        const matGrass = [
+            new THREE.MeshLambertMaterial({ map: texDirt }),
+            new THREE.MeshLambertMaterial({ map: texDirt }),
+            new THREE.MeshLambertMaterial({ map: texGrassTop }),
+            new THREE.MeshLambertMaterial({ map: texDirt }),
+            new THREE.MeshLambertMaterial({ map: texDirt }),
+            new THREE.MeshLambertMaterial({ map: texDirt })
+        ];
+
+        function build3DWorld() {
+            gridBlocks.forEach(b => scene.remove(b));
+            gridBlocks = [];
+            if (playerRobotMesh) scene.remove(playerRobotMesh);
+            activeChests.forEach(c => scene.remove(c.mesh));
+            activeChests = [];
+            
+            const size = generatedLevelData.size;
+            
+            cameraAngleX = Math.PI / 4;
+            cameraAngleY = Math.PI / 5;
+            cameraRadius = 11;
+            updateCameraPosition();
+
+            const boxGeom = new THREE.BoxGeometry(1, 1, 1);
+            
+            // Grille noire (Edges)
+            const edges = new THREE.EdgesGeometry(boxGeom);
+            const lineMat = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2 });
+
+            for (let z = 0; z < size; z++) {
+                for (let x = 0; x < size; x++) {
+                    const blockGroup = new THREE.Group();
+                    blockGroup.position.set(x, -0.5, z);
+
+                    const groundMesh = new THREE.Mesh(boxGeom, matGrass);
+                    groundMesh.receiveShadow = true;
+                    blockGroup.add(groundMesh);
+
+                    const line = new THREE.LineSegments(edges, lineMat);
+                    blockGroup.add(line);
+
+                    scene.add(blockGroup);
+                    gridBlocks.push(blockGroup);
+
+                    // Obstacles (Arbres)
+                    if (generatedLevelData.grid[z][x] === 1) {
+                        const trunk = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.8, 0.4), new THREE.MeshLambertMaterial({map: texWood}));
+                        trunk.position.set(x, 0.4, z);
+                        trunk.castShadow = true;
+                        
+                        const leaves = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshLambertMaterial({map: texLeaves}));
+                        leaves.position.set(x, 1.0, z);
+                        leaves.castShadow = true;
+
+                        scene.add(trunk);
+                        scene.add(leaves);
+                        gridBlocks.push(trunk, leaves);
+                    }
+                }
+            }
+
+            create3DGoals();
+            create3DRobot();
+        }
+
+        function create3DGoals() {
+            const size = generatedLevelData.size;
+            for (let z = 0; z < size; z++) {
+                for (let x = 0; x < size; x++) {
+                    if (generatedLevelData.grid[z][x] === 2) {
+                        const goalChestMesh = new THREE.Group();
+                        goalChestMesh.position.set(x, 0, z);
+
+                        const boxGeom = new THREE.BoxGeometry(0.65, 0.5, 0.65);
+                        const chestMat = new THREE.MeshLambertMaterial({ color: 0xeab308 });
+                        const chestBase = new THREE.Mesh(boxGeom, chestMat);
+                        chestBase.position.y = 0.25;
+                        chestBase.castShadow = true;
+                        goalChestMesh.add(chestBase);
+
+                        const lockGeom = new THREE.BoxGeometry(0.12, 0.2, 0.12);
+                        const lockMat = new THREE.MeshLambertMaterial({ color: 0xf3f4f6 });
+                        const lock = new THREE.Mesh(lockGeom, lockMat);
+                        lock.position.set(0, 0.25, 0.34);
+                        goalChestMesh.add(lock);
+
+                        const ringGeom = new THREE.TorusGeometry(0.24, 0.05, 8, 24);
+                        const ringMat = new THREE.MeshBasicMaterial({ color: 0xfef08a });
+                        const ring = new THREE.Mesh(ringGeom, ringMat);
+                        ring.position.y = 0.85;
+                        ring.rotation.x = Math.PI / 2;
+                        goalChestMesh.add(ring);
+
+                        scene.add(goalChestMesh);
+                        activeChests.push({ x: x, z: z, mesh: goalChestMesh, collected: false });
+                    }
+                }
+            }
+            updateChestsUI();
+        }
+
+        function create3DRobot() {
+            playerRobotMesh = new THREE.Group();
+            
+            // Corps
+            const bodyGeom = new THREE.BoxGeometry(0.6, 0.6, 0.6);
+            const bodyMat = new THREE.MeshLambertMaterial({ color: 0x3b82f6 });
+            const body = new THREE.Mesh(bodyGeom, bodyMat);
+            body.position.y = 0.3;
+            body.castShadow = true;
+            playerRobotMesh.add(body);
+
+            // Tête
+            const headGeom = new THREE.BoxGeometry(0.4, 0.4, 0.4);
+            const headMat = new THREE.MeshLambertMaterial({ color: 0x60a5fa });
+            const head = new THREE.Mesh(headGeom, headMat);
+            head.position.y = 0.8;
+            head.castShadow = true;
+            playerRobotMesh.add(head);
+
+            // Flèche verte (Avant)
+            const topArrowGeom = new THREE.ConeGeometry(0.15, 0.3, 3);
+            topArrowGeom.rotateX(Math.PI / 2);
+            const topArrowMat = new THREE.MeshBasicMaterial({ color: 0x4ade80 });
+            const topArrow = new THREE.Mesh(topArrowGeom, topArrowMat);
+            topArrow.position.set(0, 1.05, 0.12);
+            playerRobotMesh.add(topArrow);
+
+            // Sac à dos rouge (Arrière)
+            const packGeom = new THREE.BoxGeometry(0.35, 0.25, 0.12);
+            const packMat = new THREE.MeshLambertMaterial({ color: 0xef4444 });
+            const backpack = new THREE.Mesh(packGeom, packMat);
+            backpack.position.set(0, 0.45, -0.32);
+            playerRobotMesh.add(backpack);
+
+            // Yeux (Visière)
+            const eyeGeom = new THREE.BoxGeometry(0.28, 0.1, 0.08);
+            const eyeMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
+            const eye = new THREE.Mesh(eyeGeom, eyeMat);
+            eye.position.set(0, 0.82, 0.2);
+            playerRobotMesh.add(eye);
+
+            // Antenne
+            const antGeom = new THREE.CylinderGeometry(0.02, 0.02, 0.2);
+            const antMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            const antenna = new THREE.Mesh(antGeom, antMat);
+            antenna.position.set(0, 1.1, -0.1);
+            playerRobotMesh.add(antenna);
+
+            scene.add(playerRobotMesh);
+        }
+
+        function animateLoop() {
+            requestAnimationFrame(animateLoop);
+            
+            activeChests.forEach(c => {
+                if(!c.collected) {
+                    c.mesh.rotation.y += 0.015;
+                    const ring = c.mesh.children[2];
+                    if(ring) {
+                        ring.position.y = 0.8 + Math.sin(Date.now() * 0.003 + c.x) * 0.06;
+                    }
+                }
+            });
+
+            if (renderer && scene && camera) renderer.render(scene, camera);
+        }
+
+        // --- UI & Interaction ---
+        function renderLevelSelector() {
+            const container = document.getElementById('level-selector');
+            container.innerHTML = '';
+            for(let i=0; i<LEVEL_SPECS.length; i++) {
+                const btn = document.createElement('button');
+                btn.innerText = i + 1;
+                btn.className = `level-btn w-8 h-8 rounded-full font-bold border-2 flex items-center justify-center shrink-0 text-sm`;
+                
+                if (i === currentLevel) {
+                    btn.classList.add('active');
+                } else if (i <= maxUnlockedLevel) {
+                    btn.classList.add('bg-white', 'text-blue-600', 'border-blue-300', 'hover:bg-blue-50');
+                    btn.onclick = () => loadLevel(i);
+                } else {
+                    btn.classList.add('locked');
+                }
+                container.appendChild(btn);
+            }
+        }
+
+        function generateAndLoadCurrentLevel() {
+            generatedLevelData = generateProceduralLevel(currentLevel);
+            document.getElementById('level-title').innerText = generatedLevelData.title;
+            document.getElementById('level-desc').innerText = generatedLevelData.desc;
+            
+            build3DWorld();
+            resetLevel();
+            clearWorkspace();
+        }
+
+        function loadLevel(levelIndex) {
+            currentLevel = levelIndex;
+            renderLevelSelector();
+            generateAndLoadCurrentLevel();
+        }
+
+        function addAction(actionKey) {
+            if (isRunning) return;
+            initAudio();
+            if (programActions.length < 20) {
+                programActions.push(actionKey);
+                renderWorkspace();
+            }
+        }
+
+        function removeLastAction() {
+            if (isRunning || programActions.length === 0) return;
+            programActions.pop();
+            renderWorkspace();
+        }
+
+        function removeActionAt(index) {
+            if (isRunning) return;
+            programActions.splice(index, 1);
+            renderWorkspace();
+        }
+
+        function clearWorkspace() {
+            if (isRunning) return;
+            programActions = [];
+            renderWorkspace();
+        }
+
+        function renderWorkspace() {
+            const workspaceEl = document.getElementById('workspace');
+            workspaceEl.innerHTML = '';
+            
+            if (programActions.length === 0) {
+                workspaceEl.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-gray-400 font-bold pointer-events-none">Appuie sur les boutons pour programmer Codi</div>';
+                return;
+            }
+
+            programActions.forEach((actKey, idx) => {
+                const act = ACTIONS[actKey];
+                const card = document.createElement('div');
+                card.className = `command-card ${act.class}`;
+                
+                let transformStyle = '';
+                if(actKey === 'LEFT') transformStyle = 'transform: rotate(-90deg); display: inline-block;';
+                if(actKey === 'RIGHT') transformStyle = 'transform: rotate(90deg); display: inline-block;';
+
+                card.innerHTML = `
+                    <span class="step-num">${idx + 1}</span>
+                    <span class="text-3xl font-extrabold mb-1" style="${transformStyle}">${act.label}</span>
+                    <span class="text-[9px] uppercase font-bold tracking-tight">${getShortActionLabel(actKey)}</span>
+                    <div class="delete-badge" onclick="removeActionAt(${idx}); event.stopPropagation();">✕</div>
+                `;
+                
+                card.onclick = () => removeActionAt(idx);
+                workspaceEl.appendChild(card);
+            });
+
+            // Scroll to end
+            setTimeout(() => { workspaceEl.scrollLeft = workspaceEl.scrollWidth; }, 10);
+        }
+
+        function updateChestsUI() {
+            const counterEl = document.getElementById('chest-counter');
+            if (activeChests.length > 1) {
+                counterEl.classList.remove('hidden');
+                const collected = activeChests.filter(c => c.collected).length;
+                document.getElementById('chests-collected').innerText = collected;
+                document.getElementById('chests-total').innerText = activeChests.length;
+            } else {
+                counterEl.classList.add('hidden');
+            }
+        }
+
+        // --- Execution Logic ---
+        let rx = 0, rz = 0, rdir = 0; // 0: -Z(Nord), 1: +X(Est), 2: +Z(Sud), 3: -X(Ouest)
+
+        function setRobotRotation(dir) {
+            const angles = [Math.PI, Math.PI / 2, 0, -Math.PI / 2];
+            playerRobotMesh.rotation.y = angles[dir % 4];
+        }
+
+        async function runProgram() {
+            if (isRunning || programActions.length === 0) return;
+            initAudio();
+            isRunning = true;
+            document.getElementById('run-btn').classList.add('opacity-50', 'cursor-not-allowed');
+            
+            resetLevel();
+            const cards = document.querySelectorAll('.command-card');
+
+            for (let i = 0; i < programActions.length; i++) {
+                cards.forEach(c => c.style.boxShadow = '');
+                cards[i].style.boxShadow = '0 0 0 4px #fbbf24';
+                cards[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                
+                const act = programActions[i];
+                const res = await executeAction(act);
+                
+                if (!res.success) {
+                    cards[i].style.boxShadow = '0 0 0 4px #ef4444';
+                    handleFailure("Aïe ! Obstacle touché !");
+                    isRunning = false;
+                    document.getElementById('run-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+                    return;
+                }
+                await new Promise(r => setTimeout(r, 200));
+            }
+            
+            cards.forEach(c => c.style.boxShadow = '');
+            checkWinCondition();
+            isRunning = false;
+            document.getElementById('run-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        function executeAction(actKey) {
+            return new Promise(resolve => {
+                const duration = 400;
+                const startTime = performance.now();
+
+                if (actKey === 'LEFT' || actKey === 'RIGHT') {
+                    playMoveSound();
+                    let startDir = rdir;
+                    let endDir = actKey === 'LEFT' ? rdir - 1 : rdir + 1;
+                    if (endDir < 0) endDir = 3;
+                    if (endDir > 3) endDir = 0;
+                    
+                    const angles = [Math.PI, Math.PI / 2, 0, -Math.PI / 2];
+                    let startAngle = angles[startDir];
+                    let endAngle = angles[endDir];
+                    
+                    // Gérer le passage par 0 pour le lerp
+                    if (startDir === 3 && endDir === 0) endAngle = Math.PI * 1.5;
+                    if (startDir === 0 && endDir === 3) startAngle = Math.PI * 1.5;
+
+                    function stepTurn(time) {
+                        let progress = (time - startTime) / duration;
+                        if (progress > 1) progress = 1;
+                        playerRobotMesh.rotation.y = startAngle + (endAngle - startAngle) * progress;
+                        
+                        if (progress < 1) requestAnimationFrame(stepTurn);
+                        else {
+                            rdir = endDir;
+                            setRobotRotation(rdir);
+                            resolve({ success: true });
+                        }
+                    }
+                    requestAnimationFrame(stepTurn);
+                } 
+                else if (actKey === 'FORWARD' || actKey === 'BACKWARD') {
+                    let moveDir = rdir;
+                    if (actKey === 'BACKWARD') moveDir = (rdir + 2) % 4;
+
+                    const vectors = [{x:0,z:-1}, {x:1,z:0}, {x:0,z:1}, {x:-1,z:0}];
+                    let nx = rx + vectors[moveDir].x;
+                    let nz = rz + vectors[moveDir].z;
+                    
+                    const size = generatedLevelData.size;
+                    
+                    // Vérification collisions
+                    if (nx < 0 || nx >= size || nz < 0 || nz >= size || generatedLevelData.grid[nz][nx] === 1) {
+                        shakeRobot();
+                        resolve({ success: false });
+                        return;
+                    }
+
+                    playMoveSound();
+                    let sx = rx, sz = rz;
+
+                    function stepMove(time) {
+                        let progress = (time - startTime) / duration;
+                        if (progress > 1) progress = 1;
+                        
+                        playerRobotMesh.position.x = sx + (nx - sx) * progress;
+                        playerRobotMesh.position.z = sz + (nz - sz) * progress;
+                        playerRobotMesh.position.y = Math.sin(progress * Math.PI) * 0.3; // Sutil saut
+                        
+                        if (progress < 1) requestAnimationFrame(stepMove);
+                        else {
+                            playerRobotMesh.position.y = 0;
+                            rx = nx;
+                            rz = nz;
+                            checkChestCollection(rx, rz);
+                            resolve({ success: true });
+                        }
+                    }
+                    requestAnimationFrame(stepMove);
+                }
+            });
+        }
+
+        function checkChestCollection(x, z) {
+            const chest = activeChests.find(c => c.x === x && c.z === z && !c.collected);
+            if (chest) {
+                chest.collected = true;
+                chest.mesh.visible = false;
+                playCollectSound();
+                updateChestsUI();
+            }
+        }
+
+        function shakeRobot() {
+            playFailSound();
+            const startX = playerRobotMesh.position.x;
+            const startTime = performance.now();
+            function step(time) {
+                let progress = (time - startTime) / 300;
+                if (progress > 1) progress = 1;
+                playerRobotMesh.position.x = startX + Math.sin(progress * Math.PI * 6) * 0.1;
+                if (progress < 1) requestAnimationFrame(step);
+                else playerRobotMesh.position.x = startX;
+            }
+            requestAnimationFrame(step);
+        }
+
+        function checkWinCondition() {
+            const allCollected = activeChests.every(c => c.collected);
+            if (allCollected) {
+                victoryDance();
+                playWinSound();
+                startConfetti();
+                
+                if (currentLevel >= maxUnlockedLevel && currentLevel < LEVEL_SPECS.length - 1) {
+                    maxUnlockedLevel = currentLevel + 1;
+                    renderLevelSelector();
+                }
+
+                setTimeout(() => {
+                    document.getElementById('victory-modal').classList.remove('hidden');
+                }, 900);
+            } else {
+                handleFailure("Codi n'a pas ramassé tous les coffres du niveau !");
+            }
+        }
+
+        function victoryDance() {
+            const startTime = performance.now();
+            function step(time) {
+                let progress = (time - startTime) / 1000;
+                if (progress > 1) return;
+                playerRobotMesh.rotation.y += 0.2;
+                playerRobotMesh.position.y = Math.abs(Math.sin(progress * Math.PI * 4)) * 0.5;
+                requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function handleFailure(msg) {
+            playFailSound();
+            alert(msg); // UI simple pour échec
+        }
+
+        function resetLevel() {
+            if (isRunning) return;
+            if (!generatedLevelData) return;
+            rx = generatedLevelData.start.x;
+            rz = generatedLevelData.start.z;
+            rdir = generatedLevelData.start.dir;
+            playerRobotMesh.position.set(rx, 0, rz);
+            setRobotRotation(rdir);
+            
+            activeChests.forEach(c => {
+                c.collected = false;
+                c.mesh.visible = true;
+            });
+            updateChestsUI();
+        }
+
+        function nextLevel() {
+            document.getElementById('victory-modal').classList.add('hidden');
+            if (currentLevel < LEVEL_SPECS.length - 1) {
+                loadLevel(currentLevel + 1);
+            }
+        }
+
+        // --- Init ---
+        window.onload = () => {
+            init3D();
+            renderLevelSelector();
+            generateAndLoadCurrentLevel();
+            renderWorkspace();
+        };
+
+    </script>
+</body>
+</html>
