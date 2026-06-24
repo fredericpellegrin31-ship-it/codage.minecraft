@@ -9,7 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        body { font-family: 'Nunito', sans-serif; background-color: #f0fdf4; touch-action: manipulation; }
+        body { font-family: 'Nunito', sans-serif; background-color: #fff7ed; touch-action: manipulation; }
         
         /* Ruban de commandes (Workspace) */
         #workspace {
@@ -18,10 +18,10 @@
             overflow-x: auto;
             gap: 0.5rem;
             padding: 0.5rem;
-            min-height: 100px;
+            min-height: 110px;
             background: #ffffff;
             border-radius: 1rem;
-            border: 4px solid #bbf7d0;
+            border: 4px solid #fed7aa;
             box-shadow: inset 0 4px 6px rgba(0,0,0,0.05);
             align-items: center;
         }
@@ -37,7 +37,6 @@
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: bold;
             box-shadow: 0 4px 0 rgba(0,0,0,0.2);
             position: relative;
             animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -65,6 +64,7 @@
             align-items: center;
             justify-content: center;
             border: 2px solid white;
+            font-weight: bold;
         }
 
         .delete-badge {
@@ -81,6 +81,7 @@
             align-items: center;
             justify-content: center;
             border: 2px solid white;
+            font-weight: bold;
         }
         .command-card:hover .delete-badge { display: flex; }
 
@@ -99,7 +100,7 @@
             color: white;
             font-weight: 800;
             text-transform: uppercase;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             padding: 0.5rem;
             transition: all 0.1s;
             user-select: none;
@@ -111,14 +112,13 @@
         .btn-left { background-color: #a855f7; box-shadow: 0 6px 0 #7e22ce; }
         .btn-right { background-color: #ec4899; box-shadow: 0 6px 0 #be185d; }
         .btn-play { background-color: #22c55e; box-shadow: 0 6px 0 #15803d; font-size: 1.2rem; }
-        .btn-delete { background-color: #ef4444; box-shadow: 0 4px 0 #b91c1c; }
 
         #canvas-container {
             width: 100%;
             height: 100%;
             border-radius: 1rem;
             overflow: hidden;
-            background: #87CEEB; /* Sky blue */
+            background: #87CEEB; /* Ciel */
             box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
             cursor: grab;
             position: absolute;
@@ -128,31 +128,35 @@
 
         /* Scrollbar custom */
         ::-webkit-scrollbar { height: 10px; width: 10px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 5px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 5px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        ::-webkit-scrollbar-track { background: #ffedd5; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb { background: #fdba74; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #fb923c; }
         
         .level-btn { transition: all 0.2s; }
-        .level-btn.active { background-color: #3b82f6; color: white; border-color: #2563eb; transform: scale(1.1); font-weight: bold; }
+        .level-btn.active { background-color: #f97316; color: white; border-color: #ea580c; transform: scale(1.1); font-weight: bold; }
         .level-btn.locked { opacity: 0.5; cursor: not-allowed; background-color: #e5e7eb; border-color: #d1d5db; color: #9ca3af; }
     </style>
 </head>
 <body class="h-screen w-screen overflow-hidden flex flex-col">
 
     <!-- Header & Level Selector -->
-    <header class="bg-white shadow-md p-2 flex flex-col sm:flex-row justify-between items-center z-10 gap-2 shrink-0">
+    <header class="bg-white shadow-md p-2 flex flex-col sm:flex-row justify-between items-center z-10 gap-2 shrink-0 border-b-4 border-orange-200">
         <div class="flex items-center gap-3">
-            <h1 class="text-xl sm:text-2xl font-extrabold text-green-600 tracking-tight flex items-center gap-2">
+            <h1 class="text-xl sm:text-2xl font-extrabold text-orange-600 tracking-tight flex items-center gap-2">
                 🤖 Code Explore
             </h1>
             <span class="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full">CE1</span>
+            
+            <button onclick="document.getElementById('help-modal').classList.remove('hidden')" class="ml-2 text-sm bg-blue-100 text-blue-700 px-2 py-1 rounded-lg font-bold hover:bg-blue-200">
+                ❓ Comment jouer
+            </button>
         </div>
         
         <div class="flex items-center gap-1 overflow-x-auto max-w-full pb-1 px-1" id="level-selector">
             <!-- Rempli par JS -->
         </div>
 
-        <button onclick="generateAndLoadCurrentLevel()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold py-1.5 px-3 rounded-lg text-sm border-2 border-indigo-300 shadow-sm flex items-center gap-1 shrink-0 whitespace-nowrap">
+        <button onclick="generateAndLoadCurrentLevel()" class="bg-orange-100 hover:bg-orange-200 text-orange-800 font-bold py-1.5 px-3 rounded-lg text-sm border-2 border-orange-300 shadow-sm flex items-center gap-1 shrink-0 whitespace-nowrap">
             🎲 Nouveau parcours
         </button>
     </header>
@@ -163,24 +167,25 @@
         <!-- Left Area: 3D View & Workspace -->
         <section class="flex-1 flex flex-col gap-4 min-h-0">
             <!-- Header du niveau -->
-            <div class="bg-white p-3 rounded-2xl shadow-sm border border-green-100 shrink-0">
-                <h2 id="level-title" class="text-lg font-bold text-gray-800">1. Premiers pas</h2>
-                <p id="level-desc" class="text-sm text-gray-500">Fais avancer le robot jusqu'au coffre !</p>
+            <div class="bg-white p-3 rounded-2xl shadow-sm border border-orange-200 shrink-0 flex justify-between items-center">
+                <div>
+                    <h2 id="level-title" class="text-lg font-bold text-gray-800">1. Premiers pas</h2>
+                    <p id="level-desc" class="text-sm text-gray-500">Fais avancer le robot jusqu'au coffre !</p>
+                </div>
+                <!-- Compteur de coffres (statique ici si besoin) -->
+                <div id="chest-counter" class="bg-amber-100 border-2 border-amber-400 text-amber-800 font-bold px-3 py-1.5 rounded-xl text-sm shadow-sm hidden flex items-center gap-2">
+                    <span class="text-lg">🏆</span> <span id="chests-collected">0</span> / <span id="chests-total">1</span>
+                </div>
             </div>
 
             <!-- Canvas Container -->
-            <div class="flex-grow relative flex items-center justify-center min-h-[200px]">
+            <div class="flex-grow relative flex items-center justify-center min-h-[200px] rounded-2xl border-4 border-orange-100">
                 <div id="canvas-container">
                     <canvas id="three-canvas"></canvas>
                     
-                    <!-- Compteur de coffres -->
-                    <div id="chest-counter" class="absolute top-2 right-2 bg-white/90 border-2 border-amber-400 text-amber-800 font-bold px-3 py-1.5 rounded-xl text-xs sm:text-sm shadow-md hidden flex items-center gap-2">
-                        <span class="text-lg">🏆</span> <span id="chests-collected">0</span> / <span id="chests-total">1</span>
-                    </div>
-
                     <!-- Overlay d'aide tacticle/visuelle -->
-                    <div class="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded pointer-events-none">
-                        💡 Glisser pour tourner, Molette pour zoomer
+                    <div class="absolute bottom-2 left-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded pointer-events-none">
+                        💡 Glisser pour tourner la vue, Molette pour zoomer
                     </div>
                 </div>
             </div>
@@ -195,37 +200,35 @@
                     </div>
                 </div>
                 <div id="workspace" class="relative">
-                    <div class="absolute inset-0 flex items-center justify-center text-gray-400 font-bold pointer-events-none">
-                        Appuie sur les boutons pour programmer Codi
+                    <div id="empty-msg" class="absolute inset-0 flex items-center justify-center text-gray-400 font-bold pointer-events-none text-sm text-center px-4">
+                        Appuie sur les gros boutons pour tracer le parcours de Codi
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Right Area: Controls (Boutons d'action) -->
-        <section class="w-full md:w-80 lg:w-96 bg-white p-4 rounded-2xl shadow-lg border-2 border-green-200 flex flex-col gap-4 shrink-0 overflow-y-auto">
-            <h3 class="font-bold text-gray-800 text-center uppercase tracking-wide border-b-2 border-green-100 pb-2">Boîte à commandes</h3>
+        <section class="w-full md:w-80 lg:w-96 bg-white p-4 rounded-2xl shadow-lg border-2 border-orange-200 flex flex-col gap-4 shrink-0 overflow-y-auto">
+            <h3 class="font-bold text-gray-800 text-center uppercase tracking-wide border-b-2 border-orange-100 pb-2">Commandes</h3>
             
             <div class="grid grid-cols-2 gap-3 flex-grow content-start">
                 <button onclick="addAction('FORWARD')" class="tux-btn btn-forward col-span-2">
-                    <span class="text-5xl mb-1">↑</span>
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 mb-1 drop-shadow-md"><path d="M12 2L4 10h5v12h6V10h5L12 2z"/></svg>
                     <span>Avancer</span>
                 </button>
                 
                 <button onclick="addAction('LEFT')" class="tux-btn btn-left h-24">
-                    <!-- Flèche pivotée à -90° -->
-                    <span class="text-4xl mb-1" style="transform: rotate(-90deg); display: inline-block;">↺</span>
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 mb-1 drop-shadow-md"><path d="M8.5 4.5L2 11l6.5 6.5V13c5.5 0 9.5 2 11.5 6 0-5-3-10-11.5-11V4.5z"/></svg>
                     <span>À gauche</span>
                 </button>
 
                 <button onclick="addAction('RIGHT')" class="tux-btn btn-right h-24">
-                    <!-- Flèche pivotée à 90° -->
-                    <span class="text-4xl mb-1" style="transform: rotate(90deg); display: inline-block;">↻</span>
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 mb-1 drop-shadow-md"><path d="M15.5 4.5L22 11l-6.5 6.5V13c-5.5 0-9.5 2-11.5 6 0-5 3-10 11.5-11V4.5z"/></svg>
                     <span>À droite</span>
                 </button>
 
                 <button onclick="addAction('BACKWARD')" class="tux-btn btn-backward col-span-2">
-                    <span class="text-4xl mb-1">↓</span>
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 mb-1 drop-shadow-md"><path d="M12 22l8-8h-5V2h-6v12H4l8 8z"/></svg>
                     <span>Reculer</span>
                 </button>
             </div>
@@ -240,6 +243,7 @@
     </main>
 
     <!-- Modals -->
+    <!-- Victory Modal -->
     <div id="victory-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 hidden backdrop-blur-sm p-4">
         <div class="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-sm w-full border-4 border-green-400 transform transition-all scale-100">
             <div class="text-6xl mb-4">🏆</div>
@@ -249,10 +253,44 @@
                 <button onclick="nextLevel()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg border-b-4 border-green-700 active:translate-y-1 active:border-b-0 transition-all text-lg">
                     Niveau Suivant ➔
                 </button>
-                <button onclick="generateAndLoadCurrentLevel()" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold py-3 px-6 rounded-xl border-2 border-blue-300 active:translate-y-1 transition-all">
+                <button onclick="document.getElementById('victory-modal').classList.add('hidden'); generateAndLoadCurrentLevel();" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold py-3 px-6 rounded-xl border-2 border-blue-300 active:translate-y-1 transition-all">
                     Refaire (Autre parcours) 🎲
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="error-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 hidden backdrop-blur-sm p-4">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-sm w-full border-4 border-red-400">
+            <div class="text-6xl mb-4">💥</div>
+            <h2 class="text-2xl font-extrabold text-red-600 mb-2">Oups !</h2>
+            <p id="error-msg" class="text-gray-600 font-bold mb-6">Le robot a touché un obstacle !</p>
+            <button onclick="document.getElementById('error-modal').classList.add('hidden'); resetLevel();" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg border-b-4 border-red-700 active:translate-y-1 active:border-b-0 transition-all text-lg">
+                Essayer encore
+            </button>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 hidden backdrop-blur-sm p-4">
+        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl max-w-md w-full border-4 border-blue-400">
+            <h2 class="text-2xl font-extrabold text-blue-600 mb-4 text-center">Comment jouer ?</h2>
+            <ul class="text-gray-700 text-sm sm:text-base space-y-4 font-semibold">
+                <li>🤖 <strong>Le but :</strong> Amène le robot Codi jusqu'au coffre d'or (ou les coffres).</li>
+                <li>🧠 <strong>Programme :</strong> Appuie sur les flèches pour dire au robot ce qu'il doit faire.</li>
+                <li>⚠️ <strong>Attention :</strong>
+                    <ul class="ml-6 mt-1 list-disc font-normal">
+                        <li>Le triangle <span class="text-green-500">vert</span> sur la tête montre l'avant du robot.</li>
+                        <li>Évite les arbres et les blocs de pierre.</li>
+                        <li>Ne tombe pas dans la <span class="text-orange-500">lave</span> !</li>
+                    </ul>
+                </li>
+                <li>👀 <strong>Regarder :</strong> Clique et glisse sur l'image pour tourner la caméra et mieux voir.</li>
+            </ul>
+            <button onclick="document.getElementById('help-modal').classList.add('hidden')" class="mt-6 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg border-b-4 border-blue-700 active:translate-y-1 active:border-b-0 transition-all text-lg">
+                J'ai compris !
+            </button>
         </div>
     </div>
 
@@ -266,10 +304,22 @@
 
         // --- Action Definitions ---
         const ACTIONS = {
-            'FORWARD': { label: '↑', class: 'forward', type: 'move' },
-            'BACKWARD': { label: '↓', class: 'backward', type: 'move' },
-            'LEFT': { label: '↺', class: 'left', type: 'turn' },
-            'RIGHT': { label: '↻', class: 'right', type: 'turn' }
+            'FORWARD': { 
+                svg: '<svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8"><path d="M12 2L4 10h5v12h6V10h5L12 2z"/></svg>', 
+                class: 'forward', type: 'move' 
+            },
+            'BACKWARD': { 
+                svg: '<svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8"><path d="M12 22l8-8h-5V2h-6v12H4l8 8z"/></svg>', 
+                class: 'backward', type: 'move' 
+            },
+            'LEFT': { 
+                svg: '<svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8"><path d="M8.5 4.5L2 11l6.5 6.5V13c5.5 0 9.5 2 11.5 6 0-5-3-10-11.5-11V4.5z"/></svg>', 
+                class: 'left', type: 'turn' 
+            },
+            'RIGHT': { 
+                svg: '<svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8"><path d="M15.5 4.5L22 11l-6.5 6.5V13c-5.5 0-9.5 2-11.5 6 0-5 3-10 11.5-11V4.5z"/></svg>', 
+                class: 'right', type: 'turn' 
+            }
         };
 
         function getShortActionLabel(key) {
@@ -290,10 +340,10 @@
             { size: 5, pathLength: 5, obstacleDensity: 0.2, chests: 1 },   // Niveau 4
             { size: 5, pathLength: 6, obstacleDensity: 0.25, chests: 1 },  // Niveau 5
             { size: 6, pathLength: 6, obstacleDensity: 0.2, chests: 2 },   // Niveau 6 (2 coffres)
-            { size: 6, pathLength: 8, obstacleDensity: 0.25, chests: 2 },  // Niveau 7 (2 coffres)
+            { size: 6, pathLength: 8, obstacleDensity: 0.25, chests: 2 },  // Niveau 7
             { size: 6, pathLength: 9, obstacleDensity: 0.3, chests: 3 },   // Niveau 8 (3 coffres)
-            { size: 7, pathLength: 10, obstacleDensity: 0.3, chests: 3 },  // Niveau 9 (3 coffres)
-            { size: 7, pathLength: 12, obstacleDensity: 0.35, chests: 3 }  // Niveau 10 (3 coffres)
+            { size: 7, pathLength: 10, obstacleDensity: 0.3, chests: 3 },  // Niveau 9
+            { size: 7, pathLength: 12, obstacleDensity: 0.35, chests: 3 }  // Niveau 10
         ];
 
         function generateProceduralLevel(levelIndex) {
@@ -308,6 +358,7 @@
 
             const dirs = [{x:0,z:-1}, {x:1,z:0}, {x:0,z:1}, {x:-1,z:0}];
 
+            // Chemin garanti
             for (let i = 0; i < spec.pathLength; i++) {
                 let validDirs = dirs.filter(d => {
                     let nx = current.x + d.x;
@@ -322,15 +373,13 @@
                 let chosenDir = validDirs[Math.floor(Math.random() * validDirs.length)];
                 current = { x: current.x + chosenDir.x, z: current.z + chosenDir.z };
                 path.push({ x: current.x, z: current.z });
-                grid[current.z][current.x] = 0; // Chemin ouvert
+                grid[current.z][current.x] = 0;
             }
 
-            // Placement des coffres (buts)
+            // Placement des coffres
             let chestsToPlace = spec.chests;
             let availablePathSpots = [...path]; 
-            // Exclure le point de départ
             availablePathSpots = availablePathSpots.filter(p => !(p.x === 0 && p.z === size - 1));
-            // Mélanger
             availablePathSpots.sort(() => Math.random() - 0.5);
 
             for (let i = 0; i < chestsToPlace; i++) {
@@ -340,20 +389,33 @@
                 }
             }
 
-            // Remplissage du reste avec densité d'obstacles
+            // Remplissage avec obstacles (Arbre, Lave, Pierre)
             for (let z = 0; z < size; z++) {
                 for (let x = 0; x < size; x++) {
                     if (grid[z][x] === 1) {
-                        grid[z][x] = Math.random() < spec.obstacleDensity ? 1 : 0;
+                        const isObstacle = Math.random() < spec.obstacleDensity;
+                        if (isObstacle) {
+                            // Mélange d'obstacles à partir du niveau 5 (index 4)
+                            if (levelIndex >= 4) {
+                                const rand = Math.random();
+                                if (rand < 0.3) grid[z][x] = 3; // 3 = Lave
+                                else if (rand < 0.6) grid[z][x] = 4; // 4 = Pierre
+                                else grid[z][x] = 1; // 1 = Arbre
+                            } else {
+                                grid[z][x] = 1;
+                            }
+                        } else {
+                            grid[z][x] = 0;
+                        }
                     }
                 }
             }
-            grid[size - 1][0] = 0; // Départ forcé à 0
+            grid[size - 1][0] = 0; // Sécurité point de départ
 
             const titles = [
                 "1. Premiers pas", "2. Un peu plus loin", "3. Le premier virage",
-                "4. Le parcours du slalom", "5. Le pont d'obstacles", "6. Chasse au trésor double",
-                "7. L'escalier volcanique", "8. Le grand détour", "9. Le mystère des arbres",
+                "4. Le parcours du slalom", "5. Nouveaux défis !", "6. Chasse au trésor double",
+                "7. Le chemin rocailleux", "8. Le grand détour", "9. Danger brûlant",
                 "10. Le labyrinthe final"
             ];
             
@@ -362,9 +424,9 @@
                 "Attention aux arbres ! Trouve ton chemin.",
                 "Utilise les virages à gauche et à droite pour tourner.",
                 "Slalome entre les obstacles sans rien toucher !",
-                "Planifie soigneusement ta trajectoire !",
+                "Des blocs de pierre et de lave sont apparus !",
                 "Ramasse les 2 coffres ! Tu peux reculer si besoin.",
-                "Monte en alternant et récupère les 2 coffres !",
+                "Évite la lave et les pierres, et récupère les 2 coffres !",
                 "Grand détour nécessaire ! Ramasse les 3 coffres.",
                 "Compte bien chaque case ! 3 coffres à trouver.",
                 "Le parcours suprême ! Collecte les 3 coffres."
@@ -390,6 +452,7 @@
         let cameraAngleY = Math.PI / 5; 
         let cameraRadius = 11;
         let initialPinchDistance = null;
+        let clock = new THREE.Clock();
 
         // --- Audio System (Tone.js) ---
         let audioInitialized = false;
@@ -424,7 +487,7 @@
                 collectSynth.volume.value = -10;
 
                 audioInitialized = true;
-            } catch(e) { console.warn("L'initialisation audio a échoué:", e); }
+            } catch(e) { console.warn("Audio error:", e); }
         }
 
         function playMoveSound() { if(audioInitialized) moveSynth.triggerAttackRelease("C4", "16n"); }
@@ -448,7 +511,7 @@
             const canvas = document.getElementById('three-canvas');
             
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x87CEEB); // Ciel
+            scene.background = new THREE.Color(0x87CEEB); 
             scene.fog = new THREE.Fog(0x87CEEB, 10, 30);
 
             camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
@@ -458,7 +521,6 @@
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-            // Lumières
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
             scene.add(ambientLight);
 
@@ -467,13 +529,9 @@
             dirLight.castShadow = true;
             dirLight.shadow.mapSize.width = 1024;
             dirLight.shadow.mapSize.height = 1024;
-            dirLight.shadow.camera.left = -10;
-            dirLight.shadow.camera.right = 10;
-            dirLight.shadow.camera.top = 10;
-            dirLight.shadow.camera.bottom = -10;
             scene.add(dirLight);
 
-            // Gestion souris / tactile (Rotation et Zoom)
+            // Controls
             container.addEventListener('mousedown', (e) => {
                 isMouseDown = true;
                 previousMousePosition = { x: e.clientX, y: e.clientY };
@@ -489,7 +547,6 @@
                 previousMousePosition = { x: e.clientX, y: e.clientY };
             });
 
-            // Zoom molette
             container.addEventListener('wheel', (e) => {
                 e.preventDefault();
                 cameraRadius += e.deltaY * 0.01;
@@ -497,7 +554,6 @@
                 updateCameraPosition();
             }, { passive: false });
 
-            // Tactile
             container.addEventListener('touchstart', (e) => {
                 if(e.touches.length === 1) {
                     isMouseDown = true;
@@ -562,7 +618,7 @@
         }
 
         // --- Textures Procédurales ---
-        function createRetroTexture(colors) {
+        function createPixelTexture(colors) {
             const canvas = document.createElement('canvas');
             canvas.width = 16; canvas.height = 16;
             const ctx = canvas.getContext('2d');
@@ -577,10 +633,16 @@
             return tex;
         }
 
-        const texGrassTop = createRetroTexture(['#4ade80', '#22c55e', '#16a34a']);
-        const texDirt = createRetroTexture(['#a16207', '#854d0e', '#713f12']);
-        const texWood = createRetroTexture(['#78350f', '#92400e', '#b45309']);
-        const texLeaves = createRetroTexture(['#15803d', '#166534', '#14532d']);
+        const texGrassTop = createPixelTexture(['#4ade80', '#22c55e', '#16a34a']);
+        const texDirt = createPixelTexture(['#a16207', '#854d0e', '#713f12']);
+        const texWood = createPixelTexture(['#78350f', '#92400e', '#b45309']);
+        const texLeaves = createPixelTexture(['#15803d', '#166534', '#14532d']);
+        const texStone = createPixelTexture(['#9ca3af', '#6b7280', '#4b5563', '#374151']);
+        
+        // Configuration de la texture de lave pour l'animation
+        const texLava = createPixelTexture(['#ea580c', '#f97316', '#dc2626', '#fef08a']);
+        texLava.wrapS = THREE.RepeatWrapping;
+        texLava.wrapT = THREE.RepeatWrapping;
 
         const matGrass = [
             new THREE.MeshLambertMaterial({ map: texDirt }),
@@ -606,8 +668,6 @@
             updateCameraPosition();
 
             const boxGeom = new THREE.BoxGeometry(1, 1, 1);
-            
-            // Grille noire (Edges)
             const edges = new THREE.EdgesGeometry(boxGeom);
             const lineMat = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2 });
 
@@ -626,8 +686,9 @@
                     scene.add(blockGroup);
                     gridBlocks.push(blockGroup);
 
-                    // Obstacles (Arbres)
-                    if (generatedLevelData.grid[z][x] === 1) {
+                    const cellType = generatedLevelData.grid[z][x];
+                    if (cellType === 1) {
+                        // Arbres
                         const trunk = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.8, 0.4), new THREE.MeshLambertMaterial({map: texWood}));
                         trunk.position.set(x, 0.4, z);
                         trunk.castShadow = true;
@@ -639,6 +700,33 @@
                         scene.add(trunk);
                         scene.add(leaves);
                         gridBlocks.push(trunk, leaves);
+                    } else if (cellType === 3) {
+                        // Lave
+                        const lavaMesh = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.9, 0.95), new THREE.MeshBasicMaterial({map: texLava, color: 0xffaa44}));
+                        lavaMesh.position.set(x, 0, z);
+                        scene.add(lavaMesh);
+                        
+                        // Bordure rouge foncé pour bien définir le bloc de lave
+                        const lEdges = new THREE.EdgesGeometry(new THREE.BoxGeometry(0.95, 0.9, 0.95));
+                        const lLine = new THREE.LineSegments(lEdges, new THREE.LineBasicMaterial({ color: 0x991b1b, linewidth: 2 }));
+                        lLine.position.set(x, 0, z);
+                        scene.add(lLine);
+
+                        gridBlocks.push(lavaMesh, lLine);
+                    } else if (cellType === 4) {
+                        // Pierre
+                        const stoneMesh = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.95, 0.95), new THREE.MeshLambertMaterial({map: texStone}));
+                        stoneMesh.position.set(x, 0, z);
+                        stoneMesh.castShadow = true;
+                        stoneMesh.receiveShadow = true;
+                        scene.add(stoneMesh);
+                        
+                        const sEdges = new THREE.EdgesGeometry(new THREE.BoxGeometry(0.95, 0.95, 0.95));
+                        const sLine = new THREE.LineSegments(sEdges, new THREE.LineBasicMaterial({ color: 0x1f2937, linewidth: 2 }));
+                        sLine.position.set(x, 0, z);
+                        scene.add(sLine);
+                        
+                        gridBlocks.push(stoneMesh, sLine);
                     }
                 }
             }
@@ -655,22 +743,16 @@
                         const goalChestMesh = new THREE.Group();
                         goalChestMesh.position.set(x, 0, z);
 
-                        const boxGeom = new THREE.BoxGeometry(0.65, 0.5, 0.65);
-                        const chestMat = new THREE.MeshLambertMaterial({ color: 0xeab308 });
-                        const chestBase = new THREE.Mesh(boxGeom, chestMat);
+                        const chestBase = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.5, 0.65), new THREE.MeshLambertMaterial({ color: 0xeab308 }));
                         chestBase.position.y = 0.25;
                         chestBase.castShadow = true;
                         goalChestMesh.add(chestBase);
 
-                        const lockGeom = new THREE.BoxGeometry(0.12, 0.2, 0.12);
-                        const lockMat = new THREE.MeshLambertMaterial({ color: 0xf3f4f6 });
-                        const lock = new THREE.Mesh(lockGeom, lockMat);
+                        const lock = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.2, 0.12), new THREE.MeshLambertMaterial({ color: 0xf3f4f6 }));
                         lock.position.set(0, 0.25, 0.34);
                         goalChestMesh.add(lock);
 
-                        const ringGeom = new THREE.TorusGeometry(0.24, 0.05, 8, 24);
-                        const ringMat = new THREE.MeshBasicMaterial({ color: 0xfef08a });
-                        const ring = new THREE.Mesh(ringGeom, ringMat);
+                        const ring = new THREE.Mesh(new THREE.TorusGeometry(0.24, 0.05, 8, 24), new THREE.MeshBasicMaterial({ color: 0xfef08a }));
                         ring.position.y = 0.85;
                         ring.rotation.x = Math.PI / 2;
                         goalChestMesh.add(ring);
@@ -686,7 +768,7 @@
         function create3DRobot() {
             playerRobotMesh = new THREE.Group();
             
-            // Corps
+            // Corps principal (Bleu)
             const bodyGeom = new THREE.BoxGeometry(0.6, 0.6, 0.6);
             const bodyMat = new THREE.MeshLambertMaterial({ color: 0x3b82f6 });
             const body = new THREE.Mesh(bodyGeom, bodyMat);
@@ -694,7 +776,7 @@
             body.castShadow = true;
             playerRobotMesh.add(body);
 
-            // Tête
+            // Tête (Bleu clair)
             const headGeom = new THREE.BoxGeometry(0.4, 0.4, 0.4);
             const headMat = new THREE.MeshLambertMaterial({ color: 0x60a5fa });
             const head = new THREE.Mesh(headGeom, headMat);
@@ -702,33 +784,53 @@
             head.castShadow = true;
             playerRobotMesh.add(head);
 
-            // Flèche verte (Avant)
-            const topArrowGeom = new THREE.ConeGeometry(0.15, 0.3, 3);
-            topArrowGeom.rotateX(Math.PI / 2);
-            const topArrowMat = new THREE.MeshBasicMaterial({ color: 0x4ade80 });
-            const topArrow = new THREE.Mesh(topArrowGeom, topArrowMat);
-            topArrow.position.set(0, 1.05, 0.12);
-            playerRobotMesh.add(topArrow);
-
-            // Sac à dos rouge (Arrière)
-            const packGeom = new THREE.BoxGeometry(0.35, 0.25, 0.12);
-            const packMat = new THREE.MeshLambertMaterial({ color: 0xef4444 });
-            const backpack = new THREE.Mesh(packGeom, packMat);
-            backpack.position.set(0, 0.45, -0.32);
-            playerRobotMesh.add(backpack);
-
-            // Yeux (Visière)
+            // Yeux (Jaune)
             const eyeGeom = new THREE.BoxGeometry(0.28, 0.1, 0.08);
             const eyeMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
             const eye = new THREE.Mesh(eyeGeom, eyeMat);
-            eye.position.set(0, 0.82, 0.2);
+            eye.position.set(0, 0.82, 0.2); // +Z est l'avant
             playerRobotMesh.add(eye);
 
-            // Antenne
+            // Bras (Gris)
+            const armGeom = new THREE.BoxGeometry(0.15, 0.35, 0.2);
+            const armMat = new THREE.MeshLambertMaterial({ color: 0x94a3b8 });
+            const leftArm = new THREE.Mesh(armGeom, armMat);
+            leftArm.position.set(-0.35, 0.4, 0);
+            leftArm.castShadow = true;
+            playerRobotMesh.add(leftArm);
+
+            const rightArm = new THREE.Mesh(armGeom, armMat);
+            rightArm.position.set(0.35, 0.4, 0);
+            rightArm.castShadow = true;
+            playerRobotMesh.add(rightArm);
+
+            // Sac à dos (Vert, derrière -Z)
+            const packGeom = new THREE.BoxGeometry(0.4, 0.35, 0.2);
+            const packMat = new THREE.MeshLambertMaterial({ color: 0x22c55e });
+            const pack = new THREE.Mesh(packGeom, packMat);
+            pack.position.set(0, 0.4, -0.35);
+            pack.castShadow = true;
+            playerRobotMesh.add(pack);
+
+            // --- NOUVEAU : Triangle directionnel isocèle précis (Sur la tête) ---
+            const dirTriPts = new Float32Array([
+                0, 0, 0.25,     // Pointe avant (vers les yeux / +Z)
+                0.15, 0, -0.15, // Base arrière droite
+                -0.15, 0, -0.15 // Base arrière gauche
+            ]);
+            const dirTriGeom = new THREE.BufferGeometry();
+            dirTriGeom.setAttribute('position', new THREE.BufferAttribute(dirTriPts, 3));
+            dirTriGeom.computeVertexNormals();
+            const dirTriMat = new THREE.MeshBasicMaterial({ color: 0x10b981, side: THREE.DoubleSide });
+            const dirTri = new THREE.Mesh(dirTriGeom, dirTriMat);
+            dirTri.position.set(0, 1.02, 0); // Légèrement au-dessus de la tête
+            playerRobotMesh.add(dirTri);
+
+            // Petite antenne (décalée vers l'arrière)
             const antGeom = new THREE.CylinderGeometry(0.02, 0.02, 0.2);
-            const antMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            const antMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
             const antenna = new THREE.Mesh(antGeom, antMat);
-            antenna.position.set(0, 1.1, -0.1);
+            antenna.position.set(0, 1.15, -0.1);
             playerRobotMesh.add(antenna);
 
             scene.add(playerRobotMesh);
@@ -736,14 +838,18 @@
 
         function animateLoop() {
             requestAnimationFrame(animateLoop);
+            const time = clock.getElapsedTime();
             
+            // Animation de la texture de lave (s'écoule doucement)
+            texLava.offset.y -= 0.005;
+            texLava.offset.x += 0.002;
+
+            // Animation des coffres
             activeChests.forEach(c => {
                 if(!c.collected) {
                     c.mesh.rotation.y += 0.015;
                     const ring = c.mesh.children[2];
-                    if(ring) {
-                        ring.position.y = 0.8 + Math.sin(Date.now() * 0.003 + c.x) * 0.06;
-                    }
+                    if(ring) ring.position.y = 0.8 + Math.sin(time * 3 + c.x) * 0.06;
                 }
             });
 
@@ -757,12 +863,12 @@
             for(let i=0; i<LEVEL_SPECS.length; i++) {
                 const btn = document.createElement('button');
                 btn.innerText = i + 1;
-                btn.className = `level-btn w-8 h-8 rounded-full font-bold border-2 flex items-center justify-center shrink-0 text-sm`;
+                btn.className = `level-btn w-8 h-8 rounded-full border-2 flex items-center justify-center shrink-0 text-sm`;
                 
                 if (i === currentLevel) {
                     btn.classList.add('active');
                 } else if (i <= maxUnlockedLevel) {
-                    btn.classList.add('bg-white', 'text-blue-600', 'border-blue-300', 'hover:bg-blue-50');
+                    btn.classList.add('bg-white', 'text-orange-600', 'border-orange-300', 'hover:bg-orange-50', 'font-bold');
                     btn.onclick = () => loadLevel(i);
                 } else {
                     btn.classList.add('locked');
@@ -816,25 +922,26 @@
 
         function renderWorkspace() {
             const workspaceEl = document.getElementById('workspace');
-            workspaceEl.innerHTML = '';
+            const emptyMsg = document.getElementById('empty-msg');
+            
+            // Ne garder que le empty-msg (on supprime tout le reste)
+            Array.from(workspaceEl.children).forEach(child => {
+                if (child.id !== 'empty-msg') workspaceEl.removeChild(child);
+            });
             
             if (programActions.length === 0) {
-                workspaceEl.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-gray-400 font-bold pointer-events-none">Appuie sur les boutons pour programmer Codi</div>';
+                emptyMsg.style.display = 'flex';
                 return;
             }
+            emptyMsg.style.display = 'none';
 
             programActions.forEach((actKey, idx) => {
                 const act = ACTIONS[actKey];
                 const card = document.createElement('div');
                 card.className = `command-card ${act.class}`;
-                
-                let transformStyle = '';
-                if(actKey === 'LEFT') transformStyle = 'transform: rotate(-90deg); display: inline-block;';
-                if(actKey === 'RIGHT') transformStyle = 'transform: rotate(90deg); display: inline-block;';
-
                 card.innerHTML = `
                     <span class="step-num">${idx + 1}</span>
-                    <span class="text-3xl font-extrabold mb-1" style="${transformStyle}">${act.label}</span>
+                    <div class="mb-1">${act.svg}</div>
                     <span class="text-[9px] uppercase font-bold tracking-tight">${getShortActionLabel(actKey)}</span>
                     <div class="delete-badge" onclick="removeActionAt(${idx}); event.stopPropagation();">✕</div>
                 `;
@@ -843,7 +950,6 @@
                 workspaceEl.appendChild(card);
             });
 
-            // Scroll to end
             setTimeout(() => { workspaceEl.scrollLeft = workspaceEl.scrollWidth; }, 10);
         }
 
@@ -860,7 +966,7 @@
         }
 
         // --- Execution Logic ---
-        let rx = 0, rz = 0, rdir = 0; // 0: -Z(Nord), 1: +X(Est), 2: +Z(Sud), 3: -X(Ouest)
+        let rx = 0, rz = 0, rdir = 0; // 0: Nord(-Z), 1: Est(+X), 2: Sud(+Z), 3: Ouest(-X)
 
         function setRobotRotation(dir) {
             const angles = [Math.PI, Math.PI / 2, 0, -Math.PI / 2];
@@ -886,7 +992,7 @@
                 
                 if (!res.success) {
                     cards[i].style.boxShadow = '0 0 0 4px #ef4444';
-                    handleFailure("Aïe ! Obstacle touché !");
+                    handleFailure(res.reason);
                     isRunning = false;
                     document.getElementById('run-btn').classList.remove('opacity-50', 'cursor-not-allowed');
                     return;
@@ -916,7 +1022,6 @@
                     let startAngle = angles[startDir];
                     let endAngle = angles[endDir];
                     
-                    // Gérer le passage par 0 pour le lerp
                     if (startDir === 3 && endDir === 0) endAngle = Math.PI * 1.5;
                     if (startDir === 0 && endDir === 3) startAngle = Math.PI * 1.5;
 
@@ -944,10 +1049,21 @@
                     
                     const size = generatedLevelData.size;
                     
-                    // Vérification collisions
-                    if (nx < 0 || nx >= size || nz < 0 || nz >= size || generatedLevelData.grid[nz][nx] === 1) {
+                    // Vérification limites
+                    if (nx < 0 || nx >= size || nz < 0 || nz >= size) {
                         shakeRobot();
-                        resolve({ success: false });
+                        resolve({ success: false, reason: "Codi est sorti des limites du plateau !" });
+                        return;
+                    }
+
+                    // Vérification obstacles (Arbre, Lave, Pierre)
+                    const cellType = generatedLevelData.grid[nz][nx];
+                    if (cellType === 1 || cellType === 3 || cellType === 4) {
+                        shakeRobot();
+                        let errorMsg = "Aïe ! Le robot a foncé dans un arbre.";
+                        if (cellType === 3) errorMsg = "Oh non ! Codi est tombé dans la lave brûlante !";
+                        else if (cellType === 4) errorMsg = "Boum ! Codi a percuté un lourd bloc de pierre !";
+                        resolve({ success: false, reason: errorMsg });
                         return;
                     }
 
@@ -1016,7 +1132,7 @@
                     document.getElementById('victory-modal').classList.remove('hidden');
                 }, 900);
             } else {
-                handleFailure("Codi n'a pas ramassé tous les coffres du niveau !");
+                handleFailure("Codi n'a pas ramassé tous les coffres !");
             }
         }
 
@@ -1024,7 +1140,10 @@
             const startTime = performance.now();
             function step(time) {
                 let progress = (time - startTime) / 1000;
-                if (progress > 1) return;
+                if (progress > 1) {
+                    setRobotRotation(rdir); // Rétablir l'orientation à la fin
+                    return;
+                }
                 playerRobotMesh.rotation.y += 0.2;
                 playerRobotMesh.position.y = Math.abs(Math.sin(progress * Math.PI * 4)) * 0.5;
                 requestAnimationFrame(step);
@@ -1033,8 +1152,8 @@
         }
 
         function handleFailure(msg) {
-            playFailSound();
-            alert(msg); // UI simple pour échec
+            document.getElementById('error-msg').innerText = msg;
+            document.getElementById('error-modal').classList.remove('hidden');
         }
 
         function resetLevel() {
