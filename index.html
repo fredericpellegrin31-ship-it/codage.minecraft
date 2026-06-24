@@ -352,7 +352,11 @@
             
             let grid = Array(size).fill(null).map(() => Array(size).fill(1)); // 1 = Obstacle
             
-            let current = { x: 0, z: size - 1 };
+            // Départ depuis n'importe quelle case de la grille
+            let startX = Math.floor(Math.random() * size);
+            let startZ = Math.floor(Math.random() * size);
+            
+            let current = { x: startX, z: startZ };
             grid[current.z][current.x] = 0; // Départ ouvert
             let path = [{ x: current.x, z: current.z }];
 
@@ -379,7 +383,7 @@
             // Placement des coffres
             let chestsToPlace = spec.chests;
             let availablePathSpots = [...path]; 
-            availablePathSpots = availablePathSpots.filter(p => !(p.x === 0 && p.z === size - 1));
+            availablePathSpots = availablePathSpots.filter(p => !(p.x === startX && p.z === startZ));
             availablePathSpots.sort(() => Math.random() - 0.5);
 
             for (let i = 0; i < chestsToPlace; i++) {
@@ -410,7 +414,7 @@
                     }
                 }
             }
-            grid[size - 1][0] = 0; // Sécurité point de départ
+            grid[startZ][startX] = 0; // Sécurité point de départ
 
             const titles = [
                 "1. Premiers pas", "2. Un peu plus loin", "3. Le premier virage",
@@ -432,10 +436,15 @@
                 "Le parcours suprême ! Collecte les 3 coffres."
             ];
 
+            let startDir = 0; // Niveaux 1, 2, 3 (index 0, 1, 2) : Face au Nord (-Z) = Haut de l'écran
+            if (levelIndex >= 3) {
+                startDir = Math.floor(Math.random() * 4); // Niveaux 4+ : Direction aléatoire
+            }
+
             return {
                 grid: grid,
                 size: size,
-                start: { x: 0, z: size - 1, dir: 0 }, // Face au Nord (-Z)
+                start: { x: startX, z: startZ, dir: startDir },
                 title: titles[levelIndex],
                 desc: descs[levelIndex]
             };
@@ -448,8 +457,8 @@
         let activeChests = []; 
         let isMouseDown = false;
         let previousMousePosition = { x: 0, y: 0 };
-        let cameraAngleX = Math.PI / 4; 
-        let cameraAngleY = Math.PI / 5; 
+        let cameraAngleX = 0; // Modifié : Alignement initial droit
+        let cameraAngleY = Math.PI / 2.05; // Modifié : Vue de dessus
         let cameraRadius = 11;
         let initialPinchDistance = null;
         let clock = new THREE.Clock();
@@ -542,7 +551,7 @@
                 const deltaX = e.clientX - previousMousePosition.x;
                 const deltaY = e.clientY - previousMousePosition.y;
                 cameraAngleX -= deltaX * 0.01;
-                cameraAngleY = Math.max(0.15, Math.min(Math.PI / 2.1, cameraAngleY + deltaY * 0.01));
+                cameraAngleY = Math.max(0.15, Math.min(Math.PI / 2.01, cameraAngleY + deltaY * 0.01));
                 updateCameraPosition();
                 previousMousePosition = { x: e.clientX, y: e.clientY };
             });
@@ -575,7 +584,7 @@
                     const deltaX = e.touches[0].clientX - previousMousePosition.x;
                     const deltaY = e.touches[0].clientY - previousMousePosition.y;
                     cameraAngleX -= deltaX * 0.01;
-                    cameraAngleY = Math.max(0.15, Math.min(Math.PI / 2.1, cameraAngleY + deltaY * 0.01));
+                    cameraAngleY = Math.max(0.15, Math.min(Math.PI / 2.01, cameraAngleY + deltaY * 0.01));
                     updateCameraPosition();
                     previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
                 } else if (e.touches.length === 2 && initialPinchDistance) {
@@ -662,8 +671,8 @@
             
             const size = generatedLevelData.size;
             
-            cameraAngleX = Math.PI / 4;
-            cameraAngleY = Math.PI / 5;
+            cameraAngleX = 0; // Aligné pour que le nord (-Z) soit en haut
+            cameraAngleY = Math.PI / 2.05; // Vue de dessus
             cameraRadius = 11;
             updateCameraPosition();
 
@@ -1020,10 +1029,9 @@
                     
                     const angles = [Math.PI, Math.PI / 2, 0, -Math.PI / 2];
                     let startAngle = angles[startDir];
-                    let endAngle = angles[endDir];
                     
-                    if (startDir === 3 && endDir === 0) endAngle = Math.PI * 1.5;
-                    if (startDir === 0 && endDir === 3) startAngle = Math.PI * 1.5;
+                    // On force un quart de tour parfait pour éviter les tours complets
+                    let endAngle = startAngle + (actKey === 'LEFT' ? Math.PI / 2 : -Math.PI / 2);
 
                     function stepTurn(time) {
                         let progress = (time - startTime) / duration;
