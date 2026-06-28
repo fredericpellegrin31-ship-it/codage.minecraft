@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Code Explore - Spécial Cycle 2</title>
+    <title>Code Explore - Aventure Multivers</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
@@ -13,35 +13,16 @@
         
         /* Ruban de commandes (Workspace) */
         #workspace {
-            display: flex;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            gap: 0.5rem;
-            padding: 0.5rem;
-            min-height: 110px;
-            background: #ffffff;
-            border-radius: 1rem;
-            border: 4px solid #fed7aa;
-            box-shadow: inset 0 4px 6px rgba(0,0,0,0.05);
-            align-items: center;
+            display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 0.5rem; padding: 0.5rem;
+            min-height: 110px; background: #ffffff; border-radius: 1rem; border: 4px solid #fed7aa;
+            box-shadow: inset 0 4px 6px rgba(0,0,0,0.05); align-items: center;
         }
 
-        /* Cartes de commandes dans le ruban */
         .command-card {
-            flex: 0 0 auto;
-            width: 70px;
-            height: 80px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.2);
-            position: relative;
-            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-            transition: transform 0.1s;
+            flex: 0 0 auto; width: 70px; height: 80px; border-radius: 12px; display: flex;
+            flex-direction: column; align-items: center; justify-content: center; color: white;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2); position: relative;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; transition: transform 0.1s;
         }
         .command-card:active { transform: translateY(4px); box-shadow: none; }
         
@@ -51,59 +32,24 @@
         .command-card.right { background-color: #ec4899; box-shadow: 0 4px 0 #be185d; }
 
         .step-num {
-            position: absolute;
-            top: -6px;
-            left: -6px;
-            background: #1f2937;
-            color: white;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid white;
-            font-weight: bold;
+            position: absolute; top: -6px; left: -6px; background: #1f2937; color: white;
+            border-radius: 50%; width: 22px; height: 22px; font-size: 12px; display: flex;
+            align-items: center; justify-content: center; border: 2px solid white; font-weight: bold;
         }
 
         .delete-badge {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            background: #ef4444;
-            color: white;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            font-size: 12px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid white;
-            font-weight: bold;
+            position: absolute; top: -6px; right: -6px; background: #ef4444; color: white;
+            border-radius: 50%; width: 22px; height: 22px; font-size: 12px; display: none;
+            align-items: center; justify-content: center; border: 2px solid white; font-weight: bold;
         }
         .command-card:hover .delete-badge { display: flex; }
 
-        @keyframes popIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        /* Boutons d'action géants (style TuxBot) */
         .tux-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-radius: 1rem;
-            color: white;
-            font-weight: 800;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            padding: 0.5rem;
-            transition: all 0.1s;
-            user-select: none;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 1rem; color: white; font-weight: 800; text-transform: uppercase;
+            font-size: 0.85rem; padding: 0.5rem; transition: all 0.1s; user-select: none;
         }
         .tux-btn:active { transform: translateY(6px); box-shadow: 0 0 0 transparent !important; }
 
@@ -114,19 +60,11 @@
         .btn-play { background-color: #22c55e; box-shadow: 0 6px 0 #15803d; font-size: 1.2rem; }
 
         #canvas-container {
-            width: 100%;
-            height: 100%;
-            border-radius: 1rem;
-            overflow: hidden;
-            background: #87CEEB; /* Ciel */
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
-            cursor: grab;
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100%; height: 100%; border-radius: 1rem; overflow: hidden; background: #87CEEB;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2); cursor: grab; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
         }
         #canvas-container:active { cursor: grabbing; }
 
-        /* Scrollbar custom */
         ::-webkit-scrollbar { height: 10px; width: 10px; }
         ::-webkit-scrollbar-track { background: #ffedd5; border-radius: 5px; }
         ::-webkit-scrollbar-thumb { background: #fdba74; border-radius: 5px; }
@@ -135,26 +73,62 @@
         .level-btn { transition: all 0.2s; }
         .level-btn.active { background-color: #f97316; color: white; border-color: #ea580c; transform: scale(1.1); font-weight: bold; }
         .level-btn.locked { opacity: 0.5; cursor: not-allowed; background-color: #e5e7eb; border-color: #d1d5db; color: #9ca3af; }
+
+        .hero-choice-card { transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; }
+        .hero-choice-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
     </style>
 </head>
-<body class="h-screen w-screen overflow-hidden flex flex-col">
+<body class="h-[100dvh] w-screen overflow-hidden flex flex-col relative">
+
+    <!-- Écran de sélection des héros (S'affiche au démarrage) -->
+    <div id="hero-modal" class="fixed inset-0 bg-orange-50 z-[60] flex flex-col items-center justify-center p-4 overflow-y-auto">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-orange-600 mb-2 text-center drop-shadow-sm">Code Explore</h1>
+        <p class="text-lg text-orange-800 mb-8 font-bold text-center">Choisis ton héros pour l'aventure !</p>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-3xl">
+            <div onclick="selectHero('robot')" class="hero-choice-card bg-white p-6 rounded-3xl border-4 border-blue-400 text-center flex flex-col items-center justify-center gap-3">
+                <div class="text-7xl">🤖</div>
+                <h3 class="text-xl font-bold text-blue-600 uppercase">Le Robot</h3>
+                <p class="text-sm text-gray-500 font-semibold">Objectif : Les coffres d'or</p>
+            </div>
+            
+            <div onclick="selectHero('pirate')" class="hero-choice-card bg-white p-6 rounded-3xl border-4 border-red-400 text-center flex flex-col items-center justify-center gap-3">
+                <div class="text-7xl">🏴‍☠️</div>
+                <h3 class="text-xl font-bold text-red-600 uppercase">Le Pirate</h3>
+                <p class="text-sm text-gray-500 font-semibold">Objectif : Les pièces d'or</p>
+            </div>
+
+            <div onclick="selectHero('footballer')" class="hero-choice-card bg-white p-6 rounded-3xl border-4 border-green-400 text-center flex flex-col items-center justify-center gap-3">
+                <div class="text-7xl">⚽</div>
+                <h3 class="text-xl font-bold text-green-600 uppercase">Le Footballeur</h3>
+                <p class="text-sm text-gray-500 font-semibold">Objectif : Cages de foot</p>
+            </div>
+
+            <div onclick="selectHero('mouse')" class="hero-choice-card bg-white p-6 rounded-3xl border-4 border-purple-400 text-center flex flex-col items-center justify-center gap-3">
+                <div class="text-7xl">🐭</div>
+                <h3 class="text-xl font-bold text-purple-600 uppercase">La Souris</h3>
+                <p class="text-sm text-gray-500 font-semibold">Objectif : Le Fromage</p>
+            </div>
+        </div>
+    </div>
 
     <!-- Header & Level Selector -->
     <header class="bg-white shadow-md p-2 flex flex-col sm:flex-row justify-between items-center z-10 gap-2 shrink-0 border-b-4 border-orange-200">
         <div class="flex items-center gap-3">
-            <h1 class="text-xl sm:text-2xl font-extrabold text-orange-600 tracking-tight flex items-center gap-2">
+            <h1 id="main-title" class="text-xl sm:text-2xl font-extrabold text-orange-600 tracking-tight flex items-center gap-2">
                 🤖 Code Explore
             </h1>
             <span class="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full">CE1</span>
             
             <button onclick="document.getElementById('help-modal').classList.remove('hidden')" class="ml-2 text-sm bg-blue-100 text-blue-700 px-2 py-1 rounded-lg font-bold hover:bg-blue-200">
-                ❓ Comment jouer
+                ❓ Aide
+            </button>
+            <button onclick="showHeroSelection()" class="text-sm bg-gray-100 text-gray-700 px-2 py-1 rounded-lg font-bold hover:bg-gray-200 border border-gray-300">
+                🔄 Changer
             </button>
         </div>
         
-        <div class="flex items-center gap-1 overflow-x-auto max-w-full pb-1 px-1" id="level-selector">
-            <!-- Rempli par JS -->
-        </div>
+        <div class="flex items-center gap-1 overflow-x-auto max-w-full pb-1 px-1" id="level-selector"></div>
 
         <button onclick="generateAndLoadCurrentLevel()" class="bg-orange-100 hover:bg-orange-200 text-orange-800 font-bold py-1.5 px-3 rounded-lg text-sm border-2 border-orange-300 shadow-sm flex items-center gap-1 shrink-0 whitespace-nowrap">
             🎲 Nouveau parcours
@@ -170,11 +144,11 @@
             <div class="bg-white p-3 rounded-2xl shadow-sm border border-orange-200 shrink-0 flex justify-between items-center">
                 <div>
                     <h2 id="level-title" class="text-lg font-bold text-gray-800">1. Premiers pas</h2>
-                    <p id="level-desc" class="text-sm text-gray-500">Fais avancer le robot jusqu'au coffre !</p>
+                    <p id="level-desc" class="text-sm text-gray-500">Fais avancer le héros jusqu'à l'objectif !</p>
                 </div>
-                <!-- Compteur de coffres (statique ici si besoin) -->
-                <div id="chest-counter" class="bg-amber-100 border-2 border-amber-400 text-amber-800 font-bold px-3 py-1.5 rounded-xl text-sm shadow-sm hidden flex items-center gap-2">
-                    <span class="text-lg">🏆</span> <span id="chests-collected">0</span> / <span id="chests-total">1</span>
+                <!-- Compteur d'objectifs -->
+                <div id="goal-counter" class="bg-amber-100 border-2 border-amber-400 text-amber-800 font-bold px-3 py-1.5 rounded-xl text-sm shadow-sm hidden flex items-center gap-2">
+                    <span id="goal-icon" class="text-lg">🏆</span> <span id="goals-collected">0</span> / <span id="goals-total">1</span>
                 </div>
             </div>
 
@@ -182,10 +156,8 @@
             <div class="flex-grow relative flex items-center justify-center min-h-[200px] rounded-2xl border-4 border-orange-100">
                 <div id="canvas-container">
                     <canvas id="three-canvas"></canvas>
-                    
-                    <!-- Overlay d'aide tacticle/visuelle -->
                     <div class="absolute bottom-2 left-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded pointer-events-none">
-                        💡 Glisser pour tourner la vue, Molette pour zoomer
+                        💡 Glisser : Tourner | Molette : Zoomer
                     </div>
                 </div>
             </div>
@@ -201,56 +173,54 @@
                 </div>
                 <div id="workspace" class="relative">
                     <div id="empty-msg" class="absolute inset-0 flex items-center justify-center text-gray-400 font-bold pointer-events-none text-sm text-center px-4">
-                        Appuie sur les gros boutons pour tracer le parcours de Codi
+                        Appuie sur les gros boutons pour tracer le parcours
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Right Area: Controls (Boutons d'action) -->
+        <!-- Right Area: Controls -->
         <section class="w-full md:w-80 lg:w-96 bg-white p-4 rounded-2xl shadow-lg border-2 border-orange-200 flex flex-col gap-4 shrink-0 overflow-y-auto">
             <h3 class="font-bold text-gray-800 text-center uppercase tracking-wide border-b-2 border-orange-100 pb-2">Commandes</h3>
             
             <div class="grid grid-cols-2 gap-3 flex-grow content-start">
                 <button onclick="addAction('FORWARD')" class="tux-btn btn-forward col-span-2">
-                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 mb-1 drop-shadow-md"><path d="M12 2L4 10h5v12h6V10h5L12 2z"/></svg>
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 mb-1"><path d="M12 2L4 10h5v12h6V10h5L12 2z"/></svg>
                     <span>Avancer</span>
                 </button>
                 
                 <button onclick="addAction('LEFT')" class="tux-btn btn-left h-24">
-                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 mb-1 drop-shadow-md"><path d="M8.5 4.5L2 11l6.5 6.5V13c5.5 0 9.5 2 11.5 6 0-5-3-10-11.5-11V4.5z"/></svg>
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 mb-1"><path d="M8.5 4.5L2 11l6.5 6.5V13c5.5 0 9.5 2 11.5 6 0-5-3-10-11.5-11V4.5z"/></svg>
                     <span>À gauche</span>
                 </button>
 
                 <button onclick="addAction('RIGHT')" class="tux-btn btn-right h-24">
-                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 mb-1 drop-shadow-md"><path d="M15.5 4.5L22 11l-6.5 6.5V13c-5.5 0-9.5 2-11.5 6 0-5 3-10 11.5-11V4.5z"/></svg>
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 mb-1"><path d="M15.5 4.5L22 11l-6.5 6.5V13c-5.5 0-9.5 2-11.5 6 0-5 3-10 11.5-11V4.5z"/></svg>
                     <span>À droite</span>
                 </button>
 
                 <button onclick="addAction('BACKWARD')" class="tux-btn btn-backward col-span-2">
-                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 mb-1 drop-shadow-md"><path d="M12 22l8-8h-5V2h-6v12H4l8 8z"/></svg>
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 mb-1"><path d="M12 22l8-8h-5V2h-6v12H4l8 8z"/></svg>
                     <span>Reculer</span>
                 </button>
             </div>
 
             <div class="mt-auto pt-4 border-t-2 border-gray-100">
                 <button onclick="runProgram()" id="run-btn" class="tux-btn btn-play w-full py-4 text-xl">
-                    ▶ Lancer le robot
+                    ▶ Lancer le héros
                 </button>
             </div>
         </section>
-
     </main>
 
-    <!-- Modals -->
-    <!-- Victory Modal -->
+    <!-- Victory Modal (Standard) -->
     <div id="victory-modal" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 hidden backdrop-blur-sm p-4">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-sm w-full border-4 border-green-400 transform transition-all scale-100">
-            <div class="text-6xl mb-4">🏆</div>
+        <div class="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-sm w-full border-4 border-green-400">
+            <div class="text-6xl mb-4">🌟</div>
             <h2 class="text-3xl font-extrabold text-green-600 mb-2">Bravo !</h2>
-            <p class="text-gray-600 font-bold mb-6">Tu as récupéré tous les coffres !</p>
+            <p class="text-gray-600 font-bold mb-6">Niveau réussi avec succès !</p>
             <div class="flex flex-col gap-3">
-                <button onclick="nextLevel()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg border-b-4 border-green-700 active:translate-y-1 active:border-b-0 transition-all text-lg">
+                <button onclick="nextLevel()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg border-b-4 border-green-700 active:translate-y-1 transition-all text-lg">
                     Niveau Suivant ➔
                 </button>
                 <button onclick="document.getElementById('victory-modal').classList.add('hidden'); generateAndLoadCurrentLevel();" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold py-3 px-6 rounded-xl border-2 border-blue-300 active:translate-y-1 transition-all">
@@ -265,8 +235,8 @@
         <div class="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-sm w-full border-4 border-red-400">
             <div class="text-6xl mb-4">💥</div>
             <h2 class="text-2xl font-extrabold text-red-600 mb-2">Oups !</h2>
-            <p id="error-msg" class="text-gray-600 font-bold mb-6">Le robot a touché un obstacle !</p>
-            <button onclick="document.getElementById('error-modal').classList.add('hidden'); resetLevel();" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg border-b-4 border-red-700 active:translate-y-1 active:border-b-0 transition-all text-lg">
+            <p id="error-msg" class="text-gray-600 font-bold mb-6">Le héros a touché un obstacle !</p>
+            <button onclick="document.getElementById('error-modal').classList.add('hidden'); resetLevel();" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg border-b-4 border-red-700 active:translate-y-1 transition-all text-lg">
                 Essayer encore
             </button>
         </div>
@@ -277,193 +247,172 @@
         <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl max-w-md w-full border-4 border-blue-400">
             <h2 class="text-2xl font-extrabold text-blue-600 mb-4 text-center">Comment jouer ?</h2>
             <ul class="text-gray-700 text-sm sm:text-base space-y-4 font-semibold">
-                <li>🤖 <strong>Le but :</strong> Amène le robot Codi jusqu'au coffre d'or (ou les coffres).</li>
-                <li>🧠 <strong>Programme :</strong> Appuie sur les flèches pour dire au robot ce qu'il doit faire.</li>
+                <li>🎯 <strong>Le but :</strong> Amène ton héros jusqu'à son objectif (coffre, pièce, fromage ou cage de foot).</li>
+                <li>🧠 <strong>Programme :</strong> Appuie sur les flèches pour programmer les mouvements.</li>
                 <li>⚠️ <strong>Attention :</strong>
                     <ul class="ml-6 mt-1 list-disc font-normal">
-                        <li>Le triangle <span class="text-green-500">vert</span> sur la tête montre l'avant du robot.</li>
-                        <li>Évite les arbres et les blocs de pierre.</li>
-                        <li>Ne tombe pas dans la <span class="text-orange-500">lave</span> !</li>
+                        <li>Le grand triangle <span class="text-green-500">vert</span> montre toujours vers où regarde le héros.</li>
+                        <li>Évite les obstacles (arbres, pierre, lave).</li>
                     </ul>
                 </li>
-                <li>👀 <strong>Regarder :</strong> Clique et glisse sur l'image pour tourner la caméra et mieux voir.</li>
             </ul>
-            <button onclick="document.getElementById('help-modal').classList.add('hidden')" class="mt-6 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg border-b-4 border-blue-700 active:translate-y-1 active:border-b-0 transition-all text-lg">
+            <button onclick="document.getElementById('help-modal').classList.add('hidden')" class="mt-6 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-xl border-b-4 border-blue-700 active:translate-y-1 transition-all text-lg">
                 J'ai compris !
             </button>
         </div>
     </div>
 
+    <!-- Champion Modal (Niveau 10) -->
+    <div id="champion-modal" class="fixed inset-0 bg-yellow-400 flex flex-col items-center justify-center z-[70] hidden overflow-y-auto p-4 text-center">
+        <div class="text-8xl mb-6 animate-bounce">🏆</div>
+        <h1 class="text-5xl md:text-7xl font-black text-white drop-shadow-lg mb-4 uppercase tracking-wider">Champion !</h1>
+        <h2 class="text-2xl md:text-3xl font-bold text-yellow-900 mb-8 bg-yellow-300 px-6 py-2 rounded-full inline-block">Tu as terminé tous les niveaux !</h2>
+        <p class="text-lg text-yellow-800 font-bold mb-10 max-w-lg">
+            Bravo, tu es un véritable expert en programmation de déplacements !
+        </p>
+        <button onclick="hideChampionAndReplay()" class="bg-white text-yellow-600 hover:bg-gray-100 font-extrabold py-4 px-8 rounded-2xl shadow-xl border-b-8 border-gray-300 active:translate-y-2 active:border-b-0 transition-all text-xl md:text-2xl flex items-center gap-3">
+            <span>🔄</span> S'entraîner sur le dernier niveau
+        </button>
+    </div>
+
     <script>
-        // --- Game State ---
+        // --- Variables d'état ---
+        let currentHero = 'robot'; 
         let currentLevel = 0;
         let maxUnlockedLevel = 0;
         let isRunning = false;
         let programActions = [];
         let generatedLevelData = null;
+        let championConfettiInterval = null;
 
-        // --- Action Definitions ---
+        // --- Définition des actions ---
         const ACTIONS = {
-            'FORWARD': { 
-                svg: '<svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8"><path d="M12 2L4 10h5v12h6V10h5L12 2z"/></svg>', 
-                class: 'forward', type: 'move' 
-            },
-            'BACKWARD': { 
-                svg: '<svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8"><path d="M12 22l8-8h-5V2h-6v12H4l8 8z"/></svg>', 
-                class: 'backward', type: 'move' 
-            },
-            'LEFT': { 
-                svg: '<svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8"><path d="M8.5 4.5L2 11l6.5 6.5V13c5.5 0 9.5 2 11.5 6 0-5-3-10-11.5-11V4.5z"/></svg>', 
-                class: 'left', type: 'turn' 
-            },
-            'RIGHT': { 
-                svg: '<svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8"><path d="M15.5 4.5L22 11l-6.5 6.5V13c-5.5 0-9.5 2-11.5 6 0-5 3-10 11.5-11V4.5z"/></svg>', 
-                class: 'right', type: 'turn' 
-            }
+            'FORWARD': { svg: '<svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8"><path d="M12 2L4 10h5v12h6V10h5L12 2z"/></svg>', class: 'forward' },
+            'BACKWARD': { svg: '<svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8"><path d="M12 22l8-8h-5V2h-6v12H4l8 8z"/></svg>', class: 'backward' },
+            'LEFT': { svg: '<svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8"><path d="M8.5 4.5L2 11l6.5 6.5V13c5.5 0 9.5 2 11.5 6 0-5-3-10-11.5-11V4.5z"/></svg>', class: 'left' },
+            'RIGHT': { svg: '<svg viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8"><path d="M15.5 4.5L22 11l-6.5 6.5V13c-5.5 0-9.5 2-11.5 6 0-5 3-10 11.5-11V4.5z"/></svg>', class: 'right' }
         };
 
         function getShortActionLabel(key) {
-            switch(key) {
-                case 'FORWARD': return 'Avance';
-                case 'BACKWARD': return 'Recule';
-                case 'LEFT': return 'Gauche';
-                case 'RIGHT': return 'Droite';
-                default: return '';
-            }
+            switch(key) { case 'FORWARD': return 'Avance'; case 'BACKWARD': return 'Recule'; case 'LEFT': return 'Gauche'; case 'RIGHT': return 'Droite'; default: return ''; }
         }
 
-        // --- Level Data & Generation ---
+        // --- Données des Niveaux ---
         const LEVEL_SPECS = [
-            { size: 4, pathLength: 2, obstacleDensity: 0.0, chests: 1 },   // Niveau 1
-            { size: 4, pathLength: 3, obstacleDensity: 0.1, chests: 1 },   // Niveau 2
-            { size: 5, pathLength: 4, obstacleDensity: 0.15, chests: 1 },  // Niveau 3
-            { size: 5, pathLength: 5, obstacleDensity: 0.2, chests: 1 },   // Niveau 4
-            { size: 5, pathLength: 6, obstacleDensity: 0.25, chests: 1 },  // Niveau 5
-            { size: 6, pathLength: 6, obstacleDensity: 0.2, chests: 2 },   // Niveau 6 (2 coffres)
-            { size: 6, pathLength: 8, obstacleDensity: 0.25, chests: 2 },  // Niveau 7
-            { size: 6, pathLength: 9, obstacleDensity: 0.3, chests: 3 },   // Niveau 8 (3 coffres)
-            { size: 7, pathLength: 10, obstacleDensity: 0.3, chests: 3 },  // Niveau 9
-            { size: 7, pathLength: 12, obstacleDensity: 0.35, chests: 3 }  // Niveau 10
+            { size: 4, pathLength: 2, obstacleDensity: 0.0, goals: 1 },   // Niveau 1
+            { size: 4, pathLength: 3, obstacleDensity: 0.1, goals: 1 },   // Niveau 2
+            { size: 5, pathLength: 4, obstacleDensity: 0.15, goals: 1 },  // Niveau 3
+            { size: 5, pathLength: 5, obstacleDensity: 0.2, goals: 1 },   // Niveau 4
+            { size: 5, pathLength: 6, obstacleDensity: 0.25, goals: 1 },  // Niveau 5
+            { size: 6, pathLength: 6, obstacleDensity: 0.2, goals: 2 },   // Niveau 6 (2 obj)
+            { size: 6, pathLength: 8, obstacleDensity: 0.25, goals: 2 },  // Niveau 7
+            { size: 6, pathLength: 9, obstacleDensity: 0.3, goals: 3 },   // Niveau 8 (3 obj)
+            { size: 7, pathLength: 10, obstacleDensity: 0.3, goals: 3 },  // Niveau 9
+            { size: 7, pathLength: 12, obstacleDensity: 0.35, goals: 3 }  // Niveau 10
         ];
 
+        function selectHero(hero) {
+            currentHero = hero;
+            document.getElementById('hero-modal').classList.add('hidden');
+            
+            const titles = { 'robot': '🤖 Code Explore - Robot', 'pirate': '🏴‍☠️ Code Explore - Pirate', 'footballer': '⚽ Code Explore - Foot', 'mouse': '🐭 Code Explore - Souris' };
+            document.getElementById('main-title').innerText = titles[hero];
+            
+            const goalIcons = { 'robot': '🏆', 'pirate': '🪙', 'footballer': '🥅', 'mouse': '🧀' };
+            document.getElementById('goal-icon').innerText = goalIcons[hero];
+
+            generateAndLoadCurrentLevel();
+        }
+
+        function showHeroSelection() {
+            document.getElementById('hero-modal').classList.remove('hidden');
+        }
+
+        // --- Génération procédurale ---
         function generateProceduralLevel(levelIndex) {
             const spec = LEVEL_SPECS[levelIndex];
             const size = spec.size;
-            
             let grid = Array(size).fill(null).map(() => Array(size).fill(1)); // 1 = Obstacle
             
-            // Départ depuis n'importe quelle case de la grille
             let startX = Math.floor(Math.random() * size);
             let startZ = Math.floor(Math.random() * size);
             
             let current = { x: startX, z: startZ };
-            grid[current.z][current.x] = 0; // Départ ouvert
+            grid[current.z][current.x] = 0;
             let path = [{ x: current.x, z: current.z }];
-
             const dirs = [{x:0,z:-1}, {x:1,z:0}, {x:0,z:1}, {x:-1,z:0}];
 
-            // Chemin garanti
             for (let i = 0; i < spec.pathLength; i++) {
                 let validDirs = dirs.filter(d => {
-                    let nx = current.x + d.x;
-                    let nz = current.z + d.z;
+                    let nx = current.x + d.x, nz = current.z + d.z;
                     if (nx < 0 || nx >= size || nz < 0 || nz >= size) return false;
                     if (path.some(p => p.x === nx && p.z === nz)) return false;
                     return true;
                 });
-
                 if (validDirs.length === 0) break;
-
                 let chosenDir = validDirs[Math.floor(Math.random() * validDirs.length)];
                 current = { x: current.x + chosenDir.x, z: current.z + chosenDir.z };
                 path.push({ x: current.x, z: current.z });
                 grid[current.z][current.x] = 0;
             }
 
-            // Placement des coffres
-            let chestsToPlace = spec.chests;
-            let availablePathSpots = [...path]; 
-            availablePathSpots = availablePathSpots.filter(p => !(p.x === startX && p.z === startZ));
+            let goalsToPlace = spec.goals;
+            let availablePathSpots = [...path].filter(p => !(p.x === startX && p.z === startZ));
             availablePathSpots.sort(() => Math.random() - 0.5);
 
-            for (let i = 0; i < chestsToPlace; i++) {
+            for (let i = 0; i < goalsToPlace; i++) {
                 if (availablePathSpots.length > 0) {
                     let spot = availablePathSpots.pop();
-                    grid[spot.z][spot.x] = 2; // 2 = Coffre
+                    grid[spot.z][spot.x] = 2; // 2 = Objectif
                 }
             }
 
-            // Remplissage avec obstacles (Arbre, Lave, Pierre)
             for (let z = 0; z < size; z++) {
                 for (let x = 0; x < size; x++) {
                     if (grid[z][x] === 1) {
-                        const isObstacle = Math.random() < spec.obstacleDensity;
-                        if (isObstacle) {
-                            // Mélange d'obstacles à partir du niveau 5 (index 4)
+                        if (Math.random() < spec.obstacleDensity) {
                             if (levelIndex >= 4) {
                                 const rand = Math.random();
-                                if (rand < 0.3) grid[z][x] = 3; // 3 = Lave
-                                else if (rand < 0.6) grid[z][x] = 4; // 4 = Pierre
-                                else grid[z][x] = 1; // 1 = Arbre
-                            } else {
-                                grid[z][x] = 1;
-                            }
-                        } else {
-                            grid[z][x] = 0;
-                        }
+                                if (rand < 0.3) grid[z][x] = 3; // Lave
+                                else if (rand < 0.6) grid[z][x] = 4; // Pierre
+                                else grid[z][x] = 1; // Arbre
+                            } else { grid[z][x] = 1; }
+                        } else { grid[z][x] = 0; }
                     }
                 }
             }
-            grid[startZ][startX] = 0; // Sécurité point de départ
+            grid[startZ][startX] = 0; 
 
-            const titles = [
-                "1. Premiers pas", "2. Un peu plus loin", "3. Le premier virage",
-                "4. Le parcours du slalom", "5. Nouveaux défis !", "6. Chasse au trésor double",
-                "7. Le chemin rocailleux", "8. Le grand détour", "9. Danger brûlant",
-                "10. Le labyrinthe final"
-            ];
-            
-            const descs = [
-                "Fais avancer Codi vers le coffre.",
-                "Attention aux arbres ! Trouve ton chemin.",
-                "Utilise les virages à gauche et à droite pour tourner.",
-                "Slalome entre les obstacles sans rien toucher !",
-                "Des blocs de pierre et de lave sont apparus !",
-                "Ramasse les 2 coffres ! Tu peux reculer si besoin.",
-                "Évite la lave et les pierres, et récupère les 2 coffres !",
-                "Grand détour nécessaire ! Ramasse les 3 coffres.",
-                "Compte bien chaque case ! 3 coffres à trouver.",
-                "Le parcours suprême ! Collecte les 3 coffres."
-            ];
+            // Orientation par défaut (0 = Haut/Nord) pour les 3 premiers niveaux. Aléatoire ensuite.
+            let startDir = (levelIndex >= 3) ? Math.floor(Math.random() * 4) : 0;
 
-            let startDir = 0; // Niveaux 1, 2, 3 (index 0, 1, 2) : Face au Nord (-Z) = Haut de l'écran
-            if (levelIndex >= 3) {
-                startDir = Math.floor(Math.random() * 4); // Niveaux 4+ : Direction aléatoire
-            }
+            const baseDescs = {
+                'robot': "Fais avancer le robot jusqu'au coffre.",
+                'pirate': "Amène le pirate jusqu'à la pièce d'or.",
+                'footballer': "Emmène le footballeur jusqu'à la cage.",
+                'mouse': "Guide la souris Colby jusqu'au fromage."
+            };
 
             return {
-                grid: grid,
-                size: size,
+                grid: grid, size: size,
                 start: { x: startX, z: startZ, dir: startDir },
-                title: titles[levelIndex],
-                desc: descs[levelIndex]
+                title: `Niveau ${levelIndex + 1}`,
+                desc: baseDescs[currentHero]
             };
         }
 
-        // --- 3D Engine Variables ---
+        // --- Moteur 3D Variables ---
         let scene, camera, renderer;
         let gridBlocks = []; 
-        let playerRobotMesh; 
-        let activeChests = []; 
+        let playerGroupMesh; 
+        let activeGoals = []; 
         let isMouseDown = false;
         let previousMousePosition = { x: 0, y: 0 };
-        let cameraAngleX = 0; // Modifié : Alignement initial droit
-        let cameraAngleY = Math.PI / 2.05; // Modifié : Vue de dessus
-        let cameraRadius = 11;
-        let initialPinchDistance = null;
+        // Vue de dessus par défaut
+        let cameraAngleX = 0, cameraAngleY = Math.PI / 2.05, cameraRadius = 11;
         let clock = new THREE.Clock();
 
-        // --- Audio System (Tone.js) ---
+        // --- Audio (Tone.js) ---
         let audioInitialized = false;
         let moveSynth, winSynth, failSynth, collectSynth;
 
@@ -471,175 +420,44 @@
             if (audioInitialized) return;
             try {
                 await Tone.start();
-                moveSynth = new Tone.Synth({
-                    oscillator: { type: "square" },
-                    envelope: { attack: 0.05, decay: 0.1, sustain: 0, release: 0.1 }
-                }).toDestination();
+                moveSynth = new Tone.Synth({ oscillator: { type: "square" }, envelope: { attack: 0.05, decay: 0.1, sustain: 0, release: 0.1 } }).toDestination();
                 moveSynth.volume.value = -15;
-
-                winSynth = new Tone.PolySynth(Tone.Synth, {
-                    oscillator: { type: "triangle" },
-                    envelope: { attack: 0.1, decay: 0.2, sustain: 0.5, release: 1 }
-                }).toDestination();
+                winSynth = new Tone.PolySynth(Tone.Synth, { oscillator: { type: "triangle" }, envelope: { attack: 0.1, decay: 0.2, sustain: 0.5, release: 1 } }).toDestination();
                 winSynth.volume.value = -10;
-
-                failSynth = new Tone.Synth({
-                    oscillator: { type: "sawtooth" },
-                    envelope: { attack: 0.05, decay: 0.3, sustain: 0.1, release: 0.4 }
-                }).toDestination();
+                failSynth = new Tone.Synth({ oscillator: { type: "sawtooth" }, envelope: { attack: 0.05, decay: 0.3, sustain: 0.1, release: 0.4 } }).toDestination();
                 failSynth.volume.value = -12;
-
-                collectSynth = new Tone.Synth({
-                    oscillator: { type: "sine" },
-                    envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.2 }
-                }).toDestination();
+                collectSynth = new Tone.Synth({ oscillator: { type: "sine" }, envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.2 } }).toDestination();
                 collectSynth.volume.value = -10;
-
                 audioInitialized = true;
-            } catch(e) { console.warn("Audio error:", e); }
+            } catch(e) {}
         }
-
         function playMoveSound() { if(audioInitialized) moveSynth.triggerAttackRelease("C4", "16n"); }
-        function playWinSound() { if(audioInitialized) { winSynth.triggerAttackRelease(["C4", "E4", "G4", "C5"], "2n"); } }
+        function playWinSound() { if(audioInitialized) winSynth.triggerAttackRelease(["C4", "E4", "G4", "C5"], "2n"); }
         function playFailSound() { if(audioInitialized) failSynth.triggerAttackRelease("Bb1", "4n"); }
         function playCollectSound() { if(audioInitialized) collectSynth.triggerAttackRelease("E5", "16n"); }
 
-        function startConfetti() {
-            var duration = 3 * 1000;
-            var end = Date.now() + duration;
-            (function frame() {
-                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#22c55e', '#eab308', '#3b82f6'] });
-                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#22c55e', '#eab308', '#3b82f6'] });
-                if (Date.now() < end) requestAnimationFrame(frame);
-            }());
+        function startConfettiBurst() { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); }
+        function startChampionConfetti() {
+            if(championConfettiInterval) clearInterval(championConfettiInterval);
+            championConfettiInterval = setInterval(() => {
+                confetti({ particleCount: 15, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ffea00', '#ff0000', '#00ff00'] });
+                confetti({ particleCount: 15, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ffea00', '#ff0000', '#00ff00'] });
+            }, 250);
+        }
+        function stopChampionConfetti() { if(championConfettiInterval) clearInterval(championConfettiInterval); }
+
+        function hideChampionAndReplay() {
+            stopChampionConfetti();
+            document.getElementById('champion-modal').classList.add('hidden');
+            generateAndLoadCurrentLevel();
         }
 
-        // --- 3D Initialization ---
-        function init3D() {
-            const container = document.getElementById('canvas-container');
-            const canvas = document.getElementById('three-canvas');
-            
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x87CEEB); 
-            scene.fog = new THREE.Fog(0x87CEEB, 10, 30);
-
-            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-            
-            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-            scene.add(ambientLight);
-
-            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            dirLight.position.set(10, 20, 10);
-            dirLight.castShadow = true;
-            dirLight.shadow.mapSize.width = 1024;
-            dirLight.shadow.mapSize.height = 1024;
-            scene.add(dirLight);
-
-            // Controls
-            container.addEventListener('mousedown', (e) => {
-                isMouseDown = true;
-                previousMousePosition = { x: e.clientX, y: e.clientY };
-            });
-            window.addEventListener('mouseup', () => { isMouseDown = false; });
-            container.addEventListener('mousemove', (e) => {
-                if (!isMouseDown) return;
-                const deltaX = e.clientX - previousMousePosition.x;
-                const deltaY = e.clientY - previousMousePosition.y;
-                cameraAngleX -= deltaX * 0.01;
-                cameraAngleY = Math.max(0.15, Math.min(Math.PI / 2.01, cameraAngleY + deltaY * 0.01));
-                updateCameraPosition();
-                previousMousePosition = { x: e.clientX, y: e.clientY };
-            });
-
-            container.addEventListener('wheel', (e) => {
-                e.preventDefault();
-                cameraRadius += e.deltaY * 0.01;
-                cameraRadius = Math.max(6, Math.min(25, cameraRadius));
-                updateCameraPosition();
-            }, { passive: false });
-
-            container.addEventListener('touchstart', (e) => {
-                if(e.touches.length === 1) {
-                    isMouseDown = true;
-                    previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-                } else if (e.touches.length === 2) {
-                    initialPinchDistance = Math.hypot(
-                        e.touches[0].clientX - e.touches[1].clientX,
-                        e.touches[0].clientY - e.touches[1].clientY
-                    );
-                }
-            }, {passive: false});
-            container.addEventListener('touchend', () => { 
-                isMouseDown = false; 
-                initialPinchDistance = null;
-            });
-            container.addEventListener('touchmove', (e) => {
-                if (e.touches.length === 1 && isMouseDown) {
-                    e.preventDefault();
-                    const deltaX = e.touches[0].clientX - previousMousePosition.x;
-                    const deltaY = e.touches[0].clientY - previousMousePosition.y;
-                    cameraAngleX -= deltaX * 0.01;
-                    cameraAngleY = Math.max(0.15, Math.min(Math.PI / 2.01, cameraAngleY + deltaY * 0.01));
-                    updateCameraPosition();
-                    previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-                } else if (e.touches.length === 2 && initialPinchDistance) {
-                    e.preventDefault();
-                    const currentDistance = Math.hypot(
-                        e.touches[0].clientX - e.touches[1].clientX,
-                        e.touches[0].clientY - e.touches[1].clientY
-                    );
-                    const delta = initialPinchDistance - currentDistance;
-                    cameraRadius += delta * 0.03;
-                    cameraRadius = Math.max(6, Math.min(25, cameraRadius));
-                    updateCameraPosition();
-                    initialPinchDistance = currentDistance;
-                }
-            }, {passive: false});
-
-            window.addEventListener('resize', onWindowResize);
-            animateLoop();
-        }
-
-        function updateCameraPosition() {
-            if (!generatedLevelData) return;
-            const size = generatedLevelData.size;
-            const cx = (size - 1) / 2;
-            const cz = (size - 1) / 2;
-            
-            camera.position.x = cx + cameraRadius * Math.sin(cameraAngleX) * Math.cos(cameraAngleY);
-            camera.position.y = cameraRadius * Math.sin(cameraAngleY);
-            camera.position.z = cz + cameraRadius * Math.cos(cameraAngleX) * Math.cos(cameraAngleY);
-            
-            camera.lookAt(cx, 0.2, cz);
-        }
-
-        function onWindowResize() {
-            if (!camera || !renderer) return;
-            const container = document.getElementById('canvas-container');
-            camera.aspect = container.clientWidth / container.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(container.clientWidth, container.clientHeight);
-        }
-
-        // --- Textures Procédurales ---
+        // --- Initialisation 3D et Textures ---
         function createPixelTexture(colors) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 16; canvas.height = 16;
+            const canvas = document.createElement('canvas'); canvas.width = 16; canvas.height = 16;
             const ctx = canvas.getContext('2d');
-            for(let i=0; i<16; i++) {
-                for(let j=0; j<16; j++) {
-                    ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
-                    ctx.fillRect(i, j, 1, 1);
-                }
-            }
-            const tex = new THREE.CanvasTexture(canvas);
-            tex.magFilter = THREE.NearestFilter;
-            return tex;
+            for(let i=0; i<16; i++) for(let j=0; j<16; j++) { ctx.fillStyle = colors[Math.floor(Math.random()*colors.length)]; ctx.fillRect(i, j, 1, 1); }
+            const tex = new THREE.CanvasTexture(canvas); tex.magFilter = THREE.NearestFilter; return tex;
         }
 
         const texGrassTop = createPixelTexture(['#4ade80', '#22c55e', '#16a34a']);
@@ -647,34 +465,89 @@
         const texWood = createPixelTexture(['#78350f', '#92400e', '#b45309']);
         const texLeaves = createPixelTexture(['#15803d', '#166534', '#14532d']);
         const texStone = createPixelTexture(['#9ca3af', '#6b7280', '#4b5563', '#374151']);
-        
-        // Configuration de la texture de lave pour l'animation
         const texLava = createPixelTexture(['#ea580c', '#f97316', '#dc2626', '#fef08a']);
-        texLava.wrapS = THREE.RepeatWrapping;
-        texLava.wrapT = THREE.RepeatWrapping;
+        texLava.wrapS = THREE.RepeatWrapping; texLava.wrapT = THREE.RepeatWrapping;
 
         const matGrass = [
-            new THREE.MeshLambertMaterial({ map: texDirt }),
-            new THREE.MeshLambertMaterial({ map: texDirt }),
-            new THREE.MeshLambertMaterial({ map: texGrassTop }),
-            new THREE.MeshLambertMaterial({ map: texDirt }),
-            new THREE.MeshLambertMaterial({ map: texDirt }),
-            new THREE.MeshLambertMaterial({ map: texDirt })
+            new THREE.MeshLambertMaterial({ map: texDirt }), new THREE.MeshLambertMaterial({ map: texDirt }),
+            new THREE.MeshLambertMaterial({ map: texGrassTop }), new THREE.MeshLambertMaterial({ map: texDirt }),
+            new THREE.MeshLambertMaterial({ map: texDirt }), new THREE.MeshLambertMaterial({ map: texDirt })
         ];
 
+        function init3D() {
+            const container = document.getElementById('canvas-container');
+            const canvas = document.getElementById('three-canvas');
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x87CEEB); 
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+            
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.shadowMap.enabled = true;
+
+            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(10, 20, 10);
+            dirLight.castShadow = true;
+            scene.add(dirLight);
+
+            // Contrôles Caméra
+            container.addEventListener('mousedown', (e) => { isMouseDown = true; previousMousePosition = { x: e.clientX, y: e.clientY }; });
+            window.addEventListener('mouseup', () => { isMouseDown = false; });
+            container.addEventListener('mousemove', (e) => {
+                if (!isMouseDown) return;
+                cameraAngleX -= (e.clientX - previousMousePosition.x) * 0.01;
+                cameraAngleY = Math.max(0.15, Math.min(Math.PI / 2.01, cameraAngleY + (e.clientY - previousMousePosition.y) * 0.01));
+                updateCameraPosition();
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault(); cameraRadius = Math.max(6, Math.min(25, cameraRadius + e.deltaY * 0.01)); updateCameraPosition();
+            }, { passive: false });
+            
+            container.addEventListener('touchstart', (e) => { if(e.touches.length === 1) { isMouseDown = true; previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY }; }});
+            container.addEventListener('touchend', () => { isMouseDown = false; });
+            container.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 1 && isMouseDown) {
+                    e.preventDefault();
+                    cameraAngleX -= (e.touches[0].clientX - previousMousePosition.x) * 0.01;
+                    cameraAngleY = Math.max(0.15, Math.min(Math.PI / 2.01, cameraAngleY + (e.touches[0].clientY - previousMousePosition.y) * 0.01));
+                    updateCameraPosition();
+                    previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                }
+            }, {passive: false});
+
+            // Gérer le redimensionnement
+            const resizeObserver = new ResizeObserver(() => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+            resizeObserver.observe(container);
+
+            animateLoop();
+        }
+
+
+<!-- ... existing code ... -->
+        function updateCameraPosition() {
+            if (!generatedLevelData) return;
+            const cx = (generatedLevelData.size - 1) / 2, cz = (generatedLevelData.size - 1) / 2;
+            camera.position.set(cx + cameraRadius * Math.sin(cameraAngleX) * Math.cos(cameraAngleY), cameraRadius * Math.sin(cameraAngleY), cz + cameraRadius * Math.cos(cameraAngleX) * Math.cos(cameraAngleY));
+            camera.lookAt(cx, 0.2, cz);
+        }
+
         function build3DWorld() {
-            gridBlocks.forEach(b => scene.remove(b));
-            gridBlocks = [];
-            if (playerRobotMesh) scene.remove(playerRobotMesh);
-            activeChests.forEach(c => scene.remove(c.mesh));
-            activeChests = [];
+            // Nettoyage complet de l'ancienne scène
+            gridBlocks.forEach(b => scene.remove(b)); gridBlocks = [];
+            if (playerGroupMesh) scene.remove(playerGroupMesh);
+            // CORRECTION : suppression correcte du groupe complet de l'objectif
+            activeGoals.forEach(c => { scene.remove(c.group); }); activeGoals = [];
             
             const size = generatedLevelData.size;
-            
-            cameraAngleX = 0; // Aligné pour que le nord (-Z) soit en haut
-            cameraAngleY = Math.PI / 2.05; // Vue de dessus
-            cameraRadius = 11;
+            cameraAngleX = 0; cameraAngleY = Math.PI / 2.05; cameraRadius = 11;
             updateCameraPosition();
+
 
             const boxGeom = new THREE.BoxGeometry(1, 1, 1);
             const edges = new THREE.EdgesGeometry(boxGeom);
@@ -684,181 +557,201 @@
                 for (let x = 0; x < size; x++) {
                     const blockGroup = new THREE.Group();
                     blockGroup.position.set(x, -0.5, z);
-
-                    const groundMesh = new THREE.Mesh(boxGeom, matGrass);
-                    groundMesh.receiveShadow = true;
+                    const groundMesh = new THREE.Mesh(boxGeom, matGrass); groundMesh.receiveShadow = true;
                     blockGroup.add(groundMesh);
-
-                    const line = new THREE.LineSegments(edges, lineMat);
-                    blockGroup.add(line);
-
-                    scene.add(blockGroup);
-                    gridBlocks.push(blockGroup);
+                    blockGroup.add(new THREE.LineSegments(edges, lineMat));
+                    scene.add(blockGroup); gridBlocks.push(blockGroup);
 
                     const cellType = generatedLevelData.grid[z][x];
-                    if (cellType === 1) {
-                        // Arbres
-                        const trunk = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.8, 0.4), new THREE.MeshLambertMaterial({map: texWood}));
-                        trunk.position.set(x, 0.4, z);
-                        trunk.castShadow = true;
-                        
-                        const leaves = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshLambertMaterial({map: texLeaves}));
-                        leaves.position.set(x, 1.0, z);
-                        leaves.castShadow = true;
-
-                        scene.add(trunk);
-                        scene.add(leaves);
-                        gridBlocks.push(trunk, leaves);
-                    } else if (cellType === 3) {
-                        // Lave
-                        const lavaMesh = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.9, 0.95), new THREE.MeshBasicMaterial({map: texLava, color: 0xffaa44}));
-                        lavaMesh.position.set(x, 0, z);
-                        scene.add(lavaMesh);
-                        
-                        // Bordure rouge foncé pour bien définir le bloc de lave
-                        const lEdges = new THREE.EdgesGeometry(new THREE.BoxGeometry(0.95, 0.9, 0.95));
-                        const lLine = new THREE.LineSegments(lEdges, new THREE.LineBasicMaterial({ color: 0x991b1b, linewidth: 2 }));
-                        lLine.position.set(x, 0, z);
-                        scene.add(lLine);
-
-                        gridBlocks.push(lavaMesh, lLine);
-                    } else if (cellType === 4) {
-                        // Pierre
-                        const stoneMesh = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.95, 0.95), new THREE.MeshLambertMaterial({map: texStone}));
-                        stoneMesh.position.set(x, 0, z);
-                        stoneMesh.castShadow = true;
-                        stoneMesh.receiveShadow = true;
-                        scene.add(stoneMesh);
-                        
-                        const sEdges = new THREE.EdgesGeometry(new THREE.BoxGeometry(0.95, 0.95, 0.95));
-                        const sLine = new THREE.LineSegments(sEdges, new THREE.LineBasicMaterial({ color: 0x1f2937, linewidth: 2 }));
-                        sLine.position.set(x, 0, z);
-                        scene.add(sLine);
-                        
-                        gridBlocks.push(stoneMesh, sLine);
+                    if (cellType === 1) { // Arbre
+                        const trunk = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.8, 0.4), new THREE.MeshLambertMaterial({map: texWood})); trunk.position.set(x, 0.4, z); trunk.castShadow = true;
+                        const leaves = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshLambertMaterial({map: texLeaves})); leaves.position.set(x, 1.0, z); leaves.castShadow = true;
+                        scene.add(trunk, leaves); gridBlocks.push(trunk, leaves);
+                    } else if (cellType === 3) { // Lave
+                        const lavaMesh = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.9, 0.95), new THREE.MeshBasicMaterial({map: texLava})); lavaMesh.position.set(x, 0, z);
+                        const lLine = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(0.95, 0.9, 0.95)), new THREE.LineBasicMaterial({ color: 0x991b1b, linewidth: 2 })); lLine.position.set(x, 0, z);
+                        scene.add(lavaMesh, lLine); gridBlocks.push(lavaMesh, lLine);
+                    } else if (cellType === 4) { // Pierre
+                        const stoneMesh = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.95, 0.95), new THREE.MeshLambertMaterial({map: texStone})); stoneMesh.position.set(x, 0, z); stoneMesh.castShadow = true; stoneMesh.receiveShadow = true;
+                        const sLine = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(0.95, 0.95, 0.95)), new THREE.LineBasicMaterial({ color: 0x1f2937, linewidth: 2 })); sLine.position.set(x, 0, z);
+                        scene.add(stoneMesh, sLine); gridBlocks.push(stoneMesh, sLine);
                     }
                 }
             }
-
-            create3DGoals();
-            create3DRobot();
+            create3DGoals(); create3DHero();
         }
 
+        // --- Création dynamique des objectifs ---
         function create3DGoals() {
             const size = generatedLevelData.size;
             for (let z = 0; z < size; z++) {
                 for (let x = 0; x < size; x++) {
                     if (generatedLevelData.grid[z][x] === 2) {
-                        const goalChestMesh = new THREE.Group();
-                        goalChestMesh.position.set(x, 0, z);
+                        const goalGroup = new THREE.Group();
+                        goalGroup.position.set(x, 0, z);
 
-                        const chestBase = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.5, 0.65), new THREE.MeshLambertMaterial({ color: 0xeab308 }));
-                        chestBase.position.y = 0.25;
-                        chestBase.castShadow = true;
-                        goalChestMesh.add(chestBase);
+                        if (currentHero === 'robot') {
+                            // Coffre
+                            const chestBase = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.5, 0.65), new THREE.MeshLambertMaterial({ color: 0xeab308 })); chestBase.position.y = 0.25; chestBase.castShadow = true;
+                            const lock = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.2, 0.12), new THREE.MeshLambertMaterial({ color: 0xf3f4f6 })); lock.position.set(0, 0.25, 0.34);
+                            goalGroup.add(chestBase, lock);
+                        } 
+                        else if (currentHero === 'pirate') {
+                            // Pièce d'or (Tourne dans animateLoop)
+                            const coin = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.08, 16), new THREE.MeshLambertMaterial({ color: 0xffd700 }));
+                            coin.rotation.x = Math.PI / 2; coin.position.y = 0.4; coin.castShadow = true;
+                            goalGroup.add(coin);
+                            goalGroup.userData = { type: 'coin', mesh: coin };
+                        }
+                        else if (currentHero === 'footballer') {
+                            // Cage de foot
+                            const postMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
+                            const p1 = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.8), postMat); p1.position.set(-0.4, 0.4, -0.2);
+                            const p2 = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.8), postMat); p2.position.set(0.4, 0.4, -0.2);
+                            const top = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.8), postMat); top.rotation.z = Math.PI/2; top.position.set(0, 0.8, -0.2);
+                            goalGroup.add(p1, p2, top);
+                        }
+                        else if (currentHero === 'mouse') {
+                            // Fromage (Statique et posé bien à plat)
+                            const cheese = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.2, 3), new THREE.MeshLambertMaterial({ color: 0xfacc15 }));
+                            cheese.position.y = 0.1; cheese.rotation.y = Math.PI / 2; cheese.castShadow = true;
+                            const holeMat = new THREE.MeshLambertMaterial({ color: 0xd97706 });
+                            const h1 = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), holeMat); h1.position.set(0.1, 0.2, 0.1);
+                            const h2 = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), holeMat); h2.position.set(-0.1, 0.2, -0.15);
+                            const h3 = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), holeMat); h3.position.set(-0.15, 0.2, 0.1);
+                            goalGroup.add(cheese, h1, h2, h3);
+                        }
 
-                        const lock = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.2, 0.12), new THREE.MeshLambertMaterial({ color: 0xf3f4f6 }));
-                        lock.position.set(0, 0.25, 0.34);
-                        goalChestMesh.add(lock);
-
-                        const ring = new THREE.Mesh(new THREE.TorusGeometry(0.24, 0.05, 8, 24), new THREE.MeshBasicMaterial({ color: 0xfef08a }));
-                        ring.position.y = 0.85;
-                        ring.rotation.x = Math.PI / 2;
-                        goalChestMesh.add(ring);
-
-                        scene.add(goalChestMesh);
-                        activeChests.push({ x: x, z: z, mesh: goalChestMesh, collected: false });
+                        scene.add(goalGroup);
+                        activeGoals.push({ x: x, z: z, group: goalGroup, collected: false });
                     }
                 }
             }
-            updateChestsUI();
+            updateGoalsUI();
         }
 
-        function create3DRobot() {
-            playerRobotMesh = new THREE.Group();
+        // --- Création dynamique du Héros ---
+        function create3DHero() {
+            playerGroupMesh = new THREE.Group();
+
+            // Triangle Vert d'orientation commun à tous
+            const dirTriPts = new Float32Array([0, 0, 0.25, 0.12, 0, -0.1, -0.12, 0, -0.1]);
+            const dirTriGeom = new THREE.BufferGeometry(); dirTriGeom.setAttribute('position', new THREE.BufferAttribute(dirTriPts, 3)); dirTriGeom.computeVertexNormals();
+            const dirTri = new THREE.Mesh(dirTriGeom, new THREE.MeshBasicMaterial({ color: 0x22c55e, side: THREE.DoubleSide }));
+            dirTri.position.set(0, 1.1, 0.1);
             
-            // Corps principal (Bleu)
-            const bodyGeom = new THREE.BoxGeometry(0.6, 0.6, 0.6);
-            const bodyMat = new THREE.MeshLambertMaterial({ color: 0x3b82f6 });
-            const body = new THREE.Mesh(bodyGeom, bodyMat);
-            body.position.y = 0.3;
-            body.castShadow = true;
-            playerRobotMesh.add(body);
+            // Le triangle vert est masqué pour la souris (orientation évidente)
+            if (currentHero !== 'mouse') {
+                playerGroupMesh.add(dirTri);
+            }
 
-            // Tête (Bleu clair)
-            const headGeom = new THREE.BoxGeometry(0.4, 0.4, 0.4);
-            const headMat = new THREE.MeshLambertMaterial({ color: 0x60a5fa });
-            const head = new THREE.Mesh(headGeom, headMat);
-            head.position.y = 0.8;
-            head.castShadow = true;
-            playerRobotMesh.add(head);
+            if (currentHero === 'robot') {
+                // Codi le Robot
+                const body = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.6), new THREE.MeshLambertMaterial({ color: 0x3b82f6 })); body.position.y = 0.3; body.castShadow = true;
+                const head = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.4), new THREE.MeshLambertMaterial({ color: 0x60a5fa })); head.position.y = 0.8; head.castShadow = true;
+                const eye = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.1, 0.08), new THREE.MeshBasicMaterial({ color: 0xfacc15 })); eye.position.set(0, 0.82, 0.2);
+                const pack = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.35, 0.2), new THREE.MeshLambertMaterial({ color: 0x22c55e })); pack.position.set(0, 0.4, -0.35); pack.castShadow = true;
+                
+                // Bras gris
+                const armGeom = new THREE.BoxGeometry(0.15, 0.35, 0.2);
+                const armMat = new THREE.MeshLambertMaterial({ color: 0x94a3b8 });
+                const lArm = new THREE.Mesh(armGeom, armMat); lArm.position.set(-0.35, 0.4, 0); lArm.castShadow = true;
+                const rArm = new THREE.Mesh(armGeom, armMat); rArm.position.set(0.35, 0.4, 0); rArm.castShadow = true;
 
-            // Yeux (Jaune)
-            const eyeGeom = new THREE.BoxGeometry(0.28, 0.1, 0.08);
-            const eyeMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
-            const eye = new THREE.Mesh(eyeGeom, eyeMat);
-            eye.position.set(0, 0.82, 0.2); // +Z est l'avant
-            playerRobotMesh.add(eye);
+                playerGroupMesh.add(body, head, eye, pack, lArm, rArm);
+            } 
+            else if (currentHero === 'pirate') {
+                // Le Pirate (Amélioré, formes arrondies)
+                const body = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.5, 16), new THREE.MeshLambertMaterial({ color: 0x7f1d1d })); body.position.y = 0.25; body.castShadow = true;
+                const belt = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.08, 16), new THREE.MeshLambertMaterial({ color: 0x000000 })); belt.position.y = 0.25;
+                const buckle = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.3), new THREE.MeshLambertMaterial({ color: 0xfacc15 })); buckle.position.set(0, 0.25, 0.15);
+                const head = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), new THREE.MeshLambertMaterial({ color: 0xfcd34d })); head.position.y = 0.65; head.castShadow = true;
+                const hatBase = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.1, 16), new THREE.MeshLambertMaterial({ color: 0x1f2937 })); hatBase.position.y = 0.8; hatBase.castShadow = true;
+                const hatTop = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 16, 0, Math.PI*2, 0, Math.PI/2), new THREE.MeshLambertMaterial({ color: 0x1f2937 })); hatTop.position.y = 0.8;
+                const patch = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.2), new THREE.MeshBasicMaterial({ color: 0x000000 })); patch.position.set(0.08, 0.68, 0.12); patch.rotation.y = Math.PI/4;
+                
+                // Bras et mains du pirate
+                const armGeom = new THREE.CylinderGeometry(0.08, 0.08, 0.25, 16);
+                const armMat = new THREE.MeshLambertMaterial({ color: 0x7f1d1d }); 
+                const lArm = new THREE.Mesh(armGeom, armMat); lArm.position.set(-0.3, 0.35, 0); lArm.castShadow = true;
+                const rArm = new THREE.Mesh(armGeom, armMat); rArm.position.set(0.3, 0.35, 0); rArm.castShadow = true;
+                const lHand = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), new THREE.MeshLambertMaterial({ color: 0xfcd34d })); lHand.position.set(-0.3, 0.2, 0);
+                const rHook = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.02, 8, 16, Math.PI), new THREE.MeshLambertMaterial({ color: 0x9ca3af })); 
+                rHook.position.set(0.3, 0.15, 0); rHook.rotation.z = -Math.PI/2;
 
-            // Bras (Gris)
-            const armGeom = new THREE.BoxGeometry(0.15, 0.35, 0.2);
-            const armMat = new THREE.MeshLambertMaterial({ color: 0x94a3b8 });
-            const leftArm = new THREE.Mesh(armGeom, armMat);
-            leftArm.position.set(-0.35, 0.4, 0);
-            leftArm.castShadow = true;
-            playerRobotMesh.add(leftArm);
+                playerGroupMesh.add(body, belt, buckle, head, hatBase, hatTop, patch, lArm, rArm, lHand, rHook);
+            }
+            else if (currentHero === 'footballer') {
+                // Le Footballeur (Amélioré avec maillot et short)
+                const shirt = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.22, 0.3, 16), new THREE.MeshLambertMaterial({ color: 0x3b82f6 })); shirt.position.y = 0.35; shirt.castShadow = true;
+                const shorts = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.2, 0.2, 16), new THREE.MeshLambertMaterial({ color: 0xffffff })); shorts.position.y = 0.1; shorts.castShadow = true;
+                const head = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), new THREE.MeshLambertMaterial({ color: 0xfcd34d })); head.position.y = 0.65; head.castShadow = true;
+                const hair = new THREE.Mesh(new THREE.SphereGeometry(0.19, 16, 16, 0, Math.PI*2, 0, Math.PI/2.5), new THREE.MeshLambertMaterial({ color: 0x451a03 })); hair.position.y = 0.66;
+                const ball = new THREE.Mesh(new THREE.IcosahedronGeometry(0.15, 1), new THREE.MeshLambertMaterial({ color: 0xffffff })); ball.position.set(0, 0.15, 0.35); ball.castShadow = true;
+                const ballSpots = new THREE.Mesh(new THREE.IcosahedronGeometry(0.151, 0), new THREE.MeshLambertMaterial({ color: 0x000000, wireframe:true, wireframeLinewidth: 2 })); ball.add(ballSpots);
+                
+                // Bras du footballeur
+                const sleeveMat = new THREE.MeshLambertMaterial({ color: 0x3b82f6 });
+                const skinMat = new THREE.MeshLambertMaterial({ color: 0xfcd34d });
+                const lSleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.2, 16), sleeveMat); lSleeve.position.set(-0.25, 0.45, 0); lSleeve.castShadow = true;
+                const lArm = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.2, 16), skinMat); lArm.position.set(-0.25, 0.25, 0); lArm.castShadow = true;
+                const rSleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.2, 16), sleeveMat); rSleeve.position.set(0.25, 0.45, 0); rSleeve.castShadow = true;
+                const rArm = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.2, 16), skinMat); rArm.position.set(0.25, 0.25, 0); rArm.castShadow = true;
 
-            const rightArm = new THREE.Mesh(armGeom, armMat);
-            rightArm.position.set(0.35, 0.4, 0);
-            rightArm.castShadow = true;
-            playerRobotMesh.add(rightArm);
+                playerGroupMesh.add(shirt, shorts, head, hair, ball, lSleeve, lArm, rSleeve, rArm);
+            }
+            else if (currentHero === 'footballer') {
+                // Le Footballeur (Amélioré avec maillot et short)
+                const shirt = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.22, 0.3, 16), new THREE.MeshLambertMaterial({ color: 0x3b82f6 })); shirt.position.y = 0.35; shirt.castShadow = true;
+                const shorts = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.2, 0.2, 16), new THREE.MeshLambertMaterial({ color: 0xffffff })); shorts.position.y = 0.1; shorts.castShadow = true;
+                const head = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), new THREE.MeshLambertMaterial({ color: 0xfcd34d })); head.position.y = 0.65; head.castShadow = true;
+                const hair = new THREE.Mesh(new THREE.SphereGeometry(0.19, 16, 16, 0, Math.PI*2, 0, Math.PI/2.5), new THREE.MeshLambertMaterial({ color: 0x451a03 })); hair.position.y = 0.66;
+                const ball = new THREE.Mesh(new THREE.IcosahedronGeometry(0.15, 1), new THREE.MeshLambertMaterial({ color: 0xffffff })); ball.position.set(0, 0.15, 0.35); ball.castShadow = true;
+                const ballSpots = new THREE.Mesh(new THREE.IcosahedronGeometry(0.151, 0), new THREE.MeshLambertMaterial({ color: 0x000000, wireframe:true, wireframeLinewidth: 2 })); ball.add(ballSpots);
+                playerGroupMesh.add(shirt, shorts, head, hair, ball);
+            }
+            else if (currentHero === 'mouse') {
+                // La Souris Colby (Refonte totale : très arrondie)
+                const bodyMat = new THREE.MeshLambertMaterial({ color: 0x6366f1 }); // Indigo
+                const body = new THREE.Mesh(new THREE.SphereGeometry(0.35, 32, 32), bodyMat); 
+                body.scale.set(1, 0.7, 1.4); // Corps très bombé et allongé
+                body.position.set(0, 0.25, 0); body.castShadow = true;
+                
+                const snout = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.3, 16), bodyMat);
+                snout.rotation.x = Math.PI / 2;
+                snout.position.set(0, 0.18, 0.55); snout.castShadow = true;
+                
+                const nose = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), new THREE.MeshLambertMaterial({ color: 0xf472b6 })); // Nez rond et rose
+                nose.position.set(0, 0.18, 0.72);
+                
+                const earGeom = new THREE.CylinderGeometry(0.18, 0.18, 0.04, 16);
+                earGeom.rotateX(Math.PI / 2);
+                const lEar = new THREE.Mesh(earGeom, new THREE.MeshLambertMaterial({ color: 0xf472b6 })); lEar.position.set(-0.25, 0.45, 0.2); lEar.rotation.y = Math.PI/5; lEar.rotation.z = Math.PI/8;
+                const rEar = new THREE.Mesh(earGeom, new THREE.MeshLambertMaterial({ color: 0xf472b6 })); rEar.position.set(0.25, 0.45, 0.2); rEar.rotation.y = -Math.PI/5; rEar.rotation.z = -Math.PI/8;
+                
+                // Gros boutons sur le dos
+                const btnGrp = new THREE.Group();
+                btnGrp.position.set(0, 0.48, -0.1);
+                const cBtn = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.04, 16), new THREE.MeshLambertMaterial({ color: 0xfacc15 })); 
+                const fBtn = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.04, 16), new THREE.MeshLambertMaterial({ color: 0x22c55e })); fBtn.position.z = 0.18; 
+                const bBtn = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.04, 16), new THREE.MeshLambertMaterial({ color: 0xf97316 })); bBtn.position.z = -0.18; 
+                btnGrp.add(cBtn, fBtn, bBtn);
+                
+                playerGroupMesh.add(body, snout, nose, lEar, rEar, btnGrp);
+            }
 
-            // Sac à dos (Vert, derrière -Z)
-            const packGeom = new THREE.BoxGeometry(0.4, 0.35, 0.2);
-            const packMat = new THREE.MeshLambertMaterial({ color: 0x22c55e });
-            const pack = new THREE.Mesh(packGeom, packMat);
-            pack.position.set(0, 0.4, -0.35);
-            pack.castShadow = true;
-            playerRobotMesh.add(pack);
-
-            // --- NOUVEAU : Triangle directionnel isocèle précis (Sur la tête) ---
-            const dirTriPts = new Float32Array([
-                0, 0, 0.25,     // Pointe avant (vers les yeux / +Z)
-                0.15, 0, -0.15, // Base arrière droite
-                -0.15, 0, -0.15 // Base arrière gauche
-            ]);
-            const dirTriGeom = new THREE.BufferGeometry();
-            dirTriGeom.setAttribute('position', new THREE.BufferAttribute(dirTriPts, 3));
-            dirTriGeom.computeVertexNormals();
-            const dirTriMat = new THREE.MeshBasicMaterial({ color: 0x10b981, side: THREE.DoubleSide });
-            const dirTri = new THREE.Mesh(dirTriGeom, dirTriMat);
-            dirTri.position.set(0, 1.02, 0); // Légèrement au-dessus de la tête
-            playerRobotMesh.add(dirTri);
-
-            // Petite antenne (décalée vers l'arrière)
-            const antGeom = new THREE.CylinderGeometry(0.02, 0.02, 0.2);
-            const antMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
-            const antenna = new THREE.Mesh(antGeom, antMat);
-            antenna.position.set(0, 1.15, -0.1);
-            playerRobotMesh.add(antenna);
-
-            scene.add(playerRobotMesh);
+            scene.add(playerGroupMesh);
         }
 
         function animateLoop() {
             requestAnimationFrame(animateLoop);
             const time = clock.getElapsedTime();
             
-            // Animation de la texture de lave (s'écoule doucement)
-            texLava.offset.y -= 0.005;
-            texLava.offset.x += 0.002;
+            texLava.offset.y -= 0.005; texLava.offset.x += 0.002;
 
-            // Animation des coffres
-            activeChests.forEach(c => {
-                if(!c.collected) {
-                    c.mesh.rotation.y += 0.015;
-                    const ring = c.mesh.children[2];
-                    if(ring) ring.position.y = 0.8 + Math.sin(time * 3 + c.x) * 0.06;
+            activeGoals.forEach(g => {
+                if(!g.collected) {
+                    if (g.userData && g.userData.type === 'coin') g.userData.mesh.rotation.z += 0.05; // Pièce tourne
                 }
             });
 
@@ -867,21 +760,13 @@
 
         // --- UI & Interaction ---
         function renderLevelSelector() {
-            const container = document.getElementById('level-selector');
-            container.innerHTML = '';
+            const container = document.getElementById('level-selector'); container.innerHTML = '';
             for(let i=0; i<LEVEL_SPECS.length; i++) {
-                const btn = document.createElement('button');
-                btn.innerText = i + 1;
+                const btn = document.createElement('button'); btn.innerText = i + 1;
                 btn.className = `level-btn w-8 h-8 rounded-full border-2 flex items-center justify-center shrink-0 text-sm`;
-                
-                if (i === currentLevel) {
-                    btn.classList.add('active');
-                } else if (i <= maxUnlockedLevel) {
-                    btn.classList.add('bg-white', 'text-orange-600', 'border-orange-300', 'hover:bg-orange-50', 'font-bold');
-                    btn.onclick = () => loadLevel(i);
-                } else {
-                    btn.classList.add('locked');
-                }
+                if (i === currentLevel) btn.classList.add('active');
+                else if (i <= maxUnlockedLevel) { btn.classList.add('bg-white', 'text-orange-600', 'border-orange-300', 'hover:bg-orange-50', 'font-bold'); btn.onclick = () => loadLevel(i); }
+                else btn.classList.add('locked');
                 container.appendChild(btn);
             }
         }
@@ -890,311 +775,179 @@
             generatedLevelData = generateProceduralLevel(currentLevel);
             document.getElementById('level-title').innerText = generatedLevelData.title;
             document.getElementById('level-desc').innerText = generatedLevelData.desc;
-            
-            build3DWorld();
-            resetLevel();
-            clearWorkspace();
+            build3DWorld(); resetLevel(); clearWorkspace(); renderLevelSelector();
         }
 
-        function loadLevel(levelIndex) {
-            currentLevel = levelIndex;
-            renderLevelSelector();
-            generateAndLoadCurrentLevel();
-        }
+        function loadLevel(levelIndex) { currentLevel = levelIndex; generateAndLoadCurrentLevel(); }
 
-        function addAction(actionKey) {
-            if (isRunning) return;
-            initAudio();
-            if (programActions.length < 20) {
-                programActions.push(actionKey);
-                renderWorkspace();
-            }
-        }
-
-        function removeLastAction() {
-            if (isRunning || programActions.length === 0) return;
-            programActions.pop();
-            renderWorkspace();
-        }
-
-        function removeActionAt(index) {
-            if (isRunning) return;
-            programActions.splice(index, 1);
-            renderWorkspace();
-        }
-
-        function clearWorkspace() {
-            if (isRunning) return;
-            programActions = [];
-            renderWorkspace();
-        }
+        function addAction(actionKey) { if (isRunning) return; initAudio(); if (programActions.length < 20) { programActions.push(actionKey); renderWorkspace(); } }
+        function removeLastAction() { if (isRunning || programActions.length === 0) return; programActions.pop(); renderWorkspace(); }
+        function removeActionAt(index) { if (isRunning) return; programActions.splice(index, 1); renderWorkspace(); }
+        function clearWorkspace() { if (isRunning) return; programActions = []; renderWorkspace(); }
 
         function renderWorkspace() {
-            const workspaceEl = document.getElementById('workspace');
-            const emptyMsg = document.getElementById('empty-msg');
-            
-            // Ne garder que le empty-msg (on supprime tout le reste)
-            Array.from(workspaceEl.children).forEach(child => {
-                if (child.id !== 'empty-msg') workspaceEl.removeChild(child);
-            });
-            
-            if (programActions.length === 0) {
-                emptyMsg.style.display = 'flex';
-                return;
-            }
+            const workspaceEl = document.getElementById('workspace'); const emptyMsg = document.getElementById('empty-msg');
+            Array.from(workspaceEl.children).forEach(child => { if (child.id !== 'empty-msg') workspaceEl.removeChild(child); });
+            if (programActions.length === 0) { emptyMsg.style.display = 'flex'; return; }
             emptyMsg.style.display = 'none';
 
             programActions.forEach((actKey, idx) => {
-                const act = ACTIONS[actKey];
-                const card = document.createElement('div');
-                card.className = `command-card ${act.class}`;
-                card.innerHTML = `
-                    <span class="step-num">${idx + 1}</span>
-                    <div class="mb-1">${act.svg}</div>
-                    <span class="text-[9px] uppercase font-bold tracking-tight">${getShortActionLabel(actKey)}</span>
-                    <div class="delete-badge" onclick="removeActionAt(${idx}); event.stopPropagation();">✕</div>
-                `;
-                
-                card.onclick = () => removeActionAt(idx);
-                workspaceEl.appendChild(card);
+                const act = ACTIONS[actKey]; const card = document.createElement('div'); card.className = `command-card ${act.class}`;
+                card.innerHTML = `<span class="step-num">${idx + 1}</span><div class="mb-1">${act.svg}</div><span class="text-[9px] uppercase font-bold tracking-tight">${getShortActionLabel(actKey)}</span><div class="delete-badge" onclick="removeActionAt(${idx}); event.stopPropagation();">✕</div>`;
+                card.onclick = () => removeActionAt(idx); workspaceEl.appendChild(card);
             });
-
             setTimeout(() => { workspaceEl.scrollLeft = workspaceEl.scrollWidth; }, 10);
         }
 
-        function updateChestsUI() {
-            const counterEl = document.getElementById('chest-counter');
-            if (activeChests.length > 1) {
+        function updateGoalsUI() {
+            const counterEl = document.getElementById('goal-counter');
+            if (activeGoals.length > 1) {
                 counterEl.classList.remove('hidden');
-                const collected = activeChests.filter(c => c.collected).length;
-                document.getElementById('chests-collected').innerText = collected;
-                document.getElementById('chests-total').innerText = activeChests.length;
-            } else {
-                counterEl.classList.add('hidden');
-            }
+                document.getElementById('goals-collected').innerText = activeGoals.filter(c => c.collected).length;
+                document.getElementById('goals-total').innerText = activeGoals.length;
+            } else { counterEl.classList.add('hidden'); }
         }
 
-        // --- Execution Logic ---
-        let rx = 0, rz = 0, rdir = 0; // 0: Nord(-Z), 1: Est(+X), 2: Sud(+Z), 3: Ouest(-X)
+        // --- Logique d'exécution ---
+        let rx = 0, rz = 0, rdir = 0;
 
         function setRobotRotation(dir) {
             const angles = [Math.PI, Math.PI / 2, 0, -Math.PI / 2];
-            playerRobotMesh.rotation.y = angles[dir % 4];
+            playerGroupMesh.rotation.y = angles[dir % 4];
         }
 
         async function runProgram() {
             if (isRunning || programActions.length === 0) return;
-            initAudio();
-            isRunning = true;
-            document.getElementById('run-btn').classList.add('opacity-50', 'cursor-not-allowed');
-            
+            initAudio(); isRunning = true; document.getElementById('run-btn').classList.add('opacity-50', 'cursor-not-allowed');
             resetLevel();
             const cards = document.querySelectorAll('.command-card');
 
             for (let i = 0; i < programActions.length; i++) {
-                cards.forEach(c => c.style.boxShadow = '');
-                cards[i].style.boxShadow = '0 0 0 4px #fbbf24';
-                cards[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                
-                const act = programActions[i];
-                const res = await executeAction(act);
-                
+                cards.forEach(c => c.style.boxShadow = ''); cards[i].style.boxShadow = '0 0 0 4px #fbbf24'; cards[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                const res = await executeAction(programActions[i]);
                 if (!res.success) {
-                    cards[i].style.boxShadow = '0 0 0 4px #ef4444';
-                    handleFailure(res.reason);
-                    isRunning = false;
-                    document.getElementById('run-btn').classList.remove('opacity-50', 'cursor-not-allowed');
-                    return;
+                    cards[i].style.boxShadow = '0 0 0 4px #ef4444'; handleFailure(res.reason);
+                    isRunning = false; document.getElementById('run-btn').classList.remove('opacity-50', 'cursor-not-allowed'); return;
                 }
                 await new Promise(r => setTimeout(r, 200));
             }
-            
-            cards.forEach(c => c.style.boxShadow = '');
-            checkWinCondition();
-            isRunning = false;
-            document.getElementById('run-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+            cards.forEach(c => c.style.boxShadow = ''); checkWinCondition();
+            isRunning = false; document.getElementById('run-btn').classList.remove('opacity-50', 'cursor-not-allowed');
         }
 
         function executeAction(actKey) {
             return new Promise(resolve => {
-                const duration = 400;
-                const startTime = performance.now();
+                const duration = 400, startTime = performance.now();
 
                 if (actKey === 'LEFT' || actKey === 'RIGHT') {
                     playMoveSound();
-                    let startDir = rdir;
-                    let endDir = actKey === 'LEFT' ? rdir - 1 : rdir + 1;
-                    if (endDir < 0) endDir = 3;
-                    if (endDir > 3) endDir = 0;
+                    let startDir = rdir; let endDir = actKey === 'LEFT' ? rdir - 1 : rdir + 1;
+                    if (endDir < 0) endDir = 3; if (endDir > 3) endDir = 0;
                     
                     const angles = [Math.PI, Math.PI / 2, 0, -Math.PI / 2];
                     let startAngle = angles[startDir];
-                    
-                    // On force un quart de tour parfait pour éviter les tours complets
+                    // On force le calcul d'un quart de tour exact pour éviter les tours à 270°
                     let endAngle = startAngle + (actKey === 'LEFT' ? Math.PI / 2 : -Math.PI / 2);
 
                     function stepTurn(time) {
-                        let progress = (time - startTime) / duration;
-                        if (progress > 1) progress = 1;
-                        playerRobotMesh.rotation.y = startAngle + (endAngle - startAngle) * progress;
-                        
+                        let progress = Math.min(1, (time - startTime) / duration);
+                        playerGroupMesh.rotation.y = startAngle + (endAngle - startAngle) * progress;
                         if (progress < 1) requestAnimationFrame(stepTurn);
-                        else {
-                            rdir = endDir;
-                            setRobotRotation(rdir);
-                            resolve({ success: true });
-                        }
+                        else { rdir = endDir; setRobotRotation(rdir); resolve({ success: true }); }
                     }
                     requestAnimationFrame(stepTurn);
                 } 
                 else if (actKey === 'FORWARD' || actKey === 'BACKWARD') {
-                    let moveDir = rdir;
-                    if (actKey === 'BACKWARD') moveDir = (rdir + 2) % 4;
-
+                    let moveDir = rdir; if (actKey === 'BACKWARD') moveDir = (rdir + 2) % 4;
                     const vectors = [{x:0,z:-1}, {x:1,z:0}, {x:0,z:1}, {x:-1,z:0}];
-                    let nx = rx + vectors[moveDir].x;
-                    let nz = rz + vectors[moveDir].z;
+                    let nx = rx + vectors[moveDir].x, nz = rz + vectors[moveDir].z;
                     
-                    const size = generatedLevelData.size;
-                    
-                    // Vérification limites
-                    if (nx < 0 || nx >= size || nz < 0 || nz >= size) {
-                        shakeRobot();
-                        resolve({ success: false, reason: "Codi est sorti des limites du plateau !" });
-                        return;
+                    if (nx < 0 || nx >= generatedLevelData.size || nz < 0 || nz >= generatedLevelData.size) {
+                        shakeRobot(); resolve({ success: false, reason: "Sortie des limites du plateau !" }); return;
                     }
-
-                    // Vérification obstacles (Arbre, Lave, Pierre)
                     const cellType = generatedLevelData.grid[nz][nx];
                     if (cellType === 1 || cellType === 3 || cellType === 4) {
                         shakeRobot();
-                        let errorMsg = "Aïe ! Le robot a foncé dans un arbre.";
-                        if (cellType === 3) errorMsg = "Oh non ! Codi est tombé dans la lave brûlante !";
-                        else if (cellType === 4) errorMsg = "Boum ! Codi a percuté un lourd bloc de pierre !";
-                        resolve({ success: false, reason: errorMsg });
-                        return;
+                        let errorMsg = "Aïe ! Le héros a foncé dans un arbre.";
+                        if (cellType === 3) errorMsg = "Oh non ! Tombé dans la lave brûlante !";
+                        else if (cellType === 4) errorMsg = "Boum ! Percuté un lourd bloc de pierre !";
+                        resolve({ success: false, reason: errorMsg }); return;
                     }
 
-                    playMoveSound();
-                    let sx = rx, sz = rz;
-
+                    playMoveSound(); let sx = rx, sz = rz;
                     function stepMove(time) {
-                        let progress = (time - startTime) / duration;
-                        if (progress > 1) progress = 1;
-                        
-                        playerRobotMesh.position.x = sx + (nx - sx) * progress;
-                        playerRobotMesh.position.z = sz + (nz - sz) * progress;
-                        playerRobotMesh.position.y = Math.sin(progress * Math.PI) * 0.3; // Sutil saut
-                        
+                        let progress = Math.min(1, (time - startTime) / duration);
+                        playerGroupMesh.position.x = sx + (nx - sx) * progress;
+                        playerGroupMesh.position.z = sz + (nz - sz) * progress;
+                        playerGroupMesh.position.y = Math.sin(progress * Math.PI) * 0.3; 
                         if (progress < 1) requestAnimationFrame(stepMove);
-                        else {
-                            playerRobotMesh.position.y = 0;
-                            rx = nx;
-                            rz = nz;
-                            checkChestCollection(rx, rz);
-                            resolve({ success: true });
-                        }
+                        else { playerGroupMesh.position.y = 0; rx = nx; rz = nz; checkCollection(rx, rz); resolve({ success: true }); }
                     }
                     requestAnimationFrame(stepMove);
                 }
             });
         }
 
-        function checkChestCollection(x, z) {
-            const chest = activeChests.find(c => c.x === x && c.z === z && !c.collected);
-            if (chest) {
-                chest.collected = true;
-                chest.mesh.visible = false;
-                playCollectSound();
-                updateChestsUI();
-            }
+        function checkCollection(x, z) {
+            const goal = activeGoals.find(c => c.x === x && c.z === z && !c.collected);
+            if (goal) { goal.collected = true; goal.group.visible = false; playCollectSound(); updateGoalsUI(); }
         }
 
         function shakeRobot() {
-            playFailSound();
-            const startX = playerRobotMesh.position.x;
-            const startTime = performance.now();
+            playFailSound(); const startX = playerGroupMesh.position.x, startTime = performance.now();
             function step(time) {
-                let progress = (time - startTime) / 300;
-                if (progress > 1) progress = 1;
-                playerRobotMesh.position.x = startX + Math.sin(progress * Math.PI * 6) * 0.1;
-                if (progress < 1) requestAnimationFrame(step);
-                else playerRobotMesh.position.x = startX;
+                let progress = Math.min(1, (time - startTime) / 300);
+                playerGroupMesh.position.x = startX + Math.sin(progress * Math.PI * 6) * 0.1;
+                if (progress < 1) requestAnimationFrame(step); else playerGroupMesh.position.x = startX;
             }
             requestAnimationFrame(step);
         }
 
         function checkWinCondition() {
-            const allCollected = activeChests.every(c => c.collected);
-            if (allCollected) {
-                victoryDance();
-                playWinSound();
-                startConfetti();
+            if (activeGoals.every(c => c.collected)) {
+                victoryDance(); playWinSound(); startConfettiBurst();
                 
                 if (currentLevel >= maxUnlockedLevel && currentLevel < LEVEL_SPECS.length - 1) {
-                    maxUnlockedLevel = currentLevel + 1;
-                    renderLevelSelector();
+                    maxUnlockedLevel = currentLevel + 1; renderLevelSelector();
                 }
 
                 setTimeout(() => {
-                    document.getElementById('victory-modal').classList.remove('hidden');
+                    if (currentLevel === LEVEL_SPECS.length - 1) {
+                        document.getElementById('champion-modal').classList.remove('hidden');
+                        startChampionConfetti();
+                    } else {
+                        document.getElementById('victory-modal').classList.remove('hidden');
+                    }
                 }, 900);
-            } else {
-                handleFailure("Codi n'a pas ramassé tous les coffres !");
-            }
+            } else { handleFailure("Tous les objectifs n'ont pas été atteints !"); }
         }
 
         function victoryDance() {
             const startTime = performance.now();
             function step(time) {
-                let progress = (time - startTime) / 1000;
-                if (progress > 1) {
-                    setRobotRotation(rdir); // Rétablir l'orientation à la fin
-                    return;
-                }
-                playerRobotMesh.rotation.y += 0.2;
-                playerRobotMesh.position.y = Math.abs(Math.sin(progress * Math.PI * 4)) * 0.5;
+                let progress = Math.min(1, (time - startTime) / 1000);
+                if (progress >= 1) { setRobotRotation(rdir); return; }
+                playerGroupMesh.rotation.y += 0.2; playerGroupMesh.position.y = Math.abs(Math.sin(progress * Math.PI * 4)) * 0.5;
                 requestAnimationFrame(step);
             }
             requestAnimationFrame(step);
         }
 
-        function handleFailure(msg) {
-            document.getElementById('error-msg').innerText = msg;
-            document.getElementById('error-modal').classList.remove('hidden');
-        }
+        function handleFailure(msg) { document.getElementById('error-msg').innerText = msg; document.getElementById('error-modal').classList.remove('hidden'); }
 
         function resetLevel() {
-            if (isRunning) return;
-            if (!generatedLevelData) return;
-            rx = generatedLevelData.start.x;
-            rz = generatedLevelData.start.z;
-            rdir = generatedLevelData.start.dir;
-            playerRobotMesh.position.set(rx, 0, rz);
-            setRobotRotation(rdir);
-            
-            activeChests.forEach(c => {
-                c.collected = false;
-                c.mesh.visible = true;
-            });
-            updateChestsUI();
+            if (isRunning || !generatedLevelData) return;
+            rx = generatedLevelData.start.x; rz = generatedLevelData.start.z; rdir = generatedLevelData.start.dir;
+            playerGroupMesh.position.set(rx, 0, rz); setRobotRotation(rdir);
+            activeGoals.forEach(c => { c.collected = false; c.group.visible = true; }); updateGoalsUI();
         }
 
         function nextLevel() {
             document.getElementById('victory-modal').classList.add('hidden');
-            if (currentLevel < LEVEL_SPECS.length - 1) {
-                loadLevel(currentLevel + 1);
-            }
+            if (currentLevel < LEVEL_SPECS.length - 1) loadLevel(currentLevel + 1);
         }
 
-        // --- Init ---
-        window.onload = () => {
-            init3D();
-            renderLevelSelector();
-            generateAndLoadCurrentLevel();
-            renderWorkspace();
-        };
-
+        window.onload = () => { init3D(); };
     </script>
 </body>
 </html>
